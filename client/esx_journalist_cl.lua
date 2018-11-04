@@ -799,8 +799,8 @@ end
 -- start/stop run
 function genRunList()
   local list = {}
-  if playerData.job.grade >= Config.journalistMinGrade then list = Config.interimBoxes[GetRandomIntInRange(1, #Config.interimBoxes)]
-  else list = Config.journalistBoxes[GetRandomIntInRange(1, #Config.journalistBoxes)] end
+  if playerData.job.grade >= Config.journalistMinGrade then list = Config.journalistBoxes[GetRandomIntInRange(1, #Config.journalistBoxes)]
+  else list = Config.interimBoxes[GetRandomIntInRange(1, #Config.interimBoxes)] end
   local newList = {}
   while #list > 0 do
     local index = GetRandomIntInRange(1, #list)
