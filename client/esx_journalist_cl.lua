@@ -159,24 +159,24 @@ end)
 
 -- marker
 function showMarker(zone)
-  DrawMarker(zone.markerD.type, 
-    zone.gps.x, zone.gps.y, zone.gps.z, 
-    0.0, 0.0, 0.0, 
-    0, 0.0, 0.0, 
-    zone.markerD.size.x , zone.markerD.size.y , zone.markerD.size.z, 
-    zone.markerD.color.r, zone.markerD.color.g, zone.markerD.color.b, 100, 
-    false, false, 2, false, false, false, false
-  )
+  if playerData.job.name == Config.jobName then
+    DrawMarker(zone.markerD.type, 
+      zone.gps.x, zone.gps.y, zone.gps.z, 
+      0.0, 0.0, 0.0, 
+      0, 0.0, 0.0, 
+      zone.markerD.size.x , zone.markerD.size.y , zone.markerD.size.z, 
+      zone.markerD.color.r, zone.markerD.color.g, zone.markerD.color.b, 100, 
+      false, false, 2, false, false, false, false
+    )
+  end
 end
 Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(0)
-    if playerData.job.name == Config.jobName then
-      for i=1, #zoneList, 1 do
-        if zoneList[i].enable and GetDistanceBetweenCoords(coords, zoneList[i].gps.x, zoneList[i].gps.y, zoneList[i].gps.z, true) < zoneList[i].markerD.drawDistance then
-          showMarker(zoneList[i])
-        end
+    for i=1, #zoneList, 1 do
+      if zoneList[i].enable and GetDistanceBetweenCoords(coords, zoneList[i].gps.x, zoneList[i].gps.y, zoneList[i].gps.z, true) < zoneList[i].markerD.drawDistance then
+        showMarker(zoneList[i])
       end
     end
   end

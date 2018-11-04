@@ -1,7 +1,7 @@
 USE `essentialmode`;
 
 INSERT INTO `jobs` (`name`, `label`, `whitelisted`) VALUES
-	('journalist', 'Weazel News', 1)
+	('journalist', 'Weazel News', 0)
 ;
 INSERT INTO `datastore` (name, label, shared) VALUES
 	('society_weazel', 'Weasel News', 1)
