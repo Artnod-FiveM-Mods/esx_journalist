@@ -306,7 +306,7 @@ Citizen.CreateThread(function()
             local plate = string.gsub(GetVehicleNumberPlateText(vehicle), " ", "")
             if string.find (plate, Config.platePrefix) then
               if hash == GetHashKey(Config.vehicles.bike.hash) or 
-              hash == GetHashKey(Config.vehicles.van.hash) or 
+              hash == Config.vehicles.van.hash or 
               hash == GetHashKey(Config.vehicles.bossCar.hash) or 
               hash == GetHashKey(Config.vehicles.copter.hash) then
                 if GetVehicleEngineHealth(vehicle) <= 500 or GetVehicleBodyHealth(vehicle) <= 500 then ESX.ShowNotification(_U('vehicle_broken'))
