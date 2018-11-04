@@ -268,7 +268,7 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(0)
-    if playerData.job.grade >= Config.journalistMinGrade and IsControlJustReleased(1, Keys["F6"]) and isWorking then openMobileweazelMenu() end
+    if playerData.job.grade >= Config.journalistMinGrade and IsControlJustReleased(1, Keys["F6"]) then openMobileweazelMenu() end
     if currentAction ~= nil then
       SetTextComponentFormat('STRING')
       AddTextComponentString(currentActionMsg)
@@ -374,12 +374,12 @@ end
 function openWeazelActionsMenu()
   printDebug('openWeazelActionsMenu')
   local elements = {}  
-  if isWorking then 
-    table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'})
-    if playerData.job.grade >= Config.storageMinGrade then  table.insert(elements, {label = _U('storage'),   value = 'storage'}) end
-    if playerData.job.grade >= Config.journalistMinGrade then  table.insert(elements, {label = _U('rdc'),   value = 'roof'}) end
-    if playerData.job.grade >= Config.manageMinGrade then table.insert(elements, {label = _U('boss_actions'), value = 'boss_actions'}) end
+  if isWorking then table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'})
   else table.insert(elements, {label = _U('take_service'), value = 'job_wear'}) end
+  if playerData.job.grade >= Config.storageMinGrade then  table.insert(elements, {label = _U('storage'),   value = 'storage'}) end
+  if playerData.job.grade >= Config.journalistMinGrade then  table.insert(elements, {label = _U('rdc'),   value = 'roof'}) end
+  if playerData.job.grade >= Config.manageMinGrade then table.insert(elements, {label = _U('boss_actions'), value = 'boss_actions'}) end
+  
   ESX.UI.Menu.Open(
     'default', GetCurrentResourceName(), 'weazel_actions',
     {
@@ -604,12 +604,8 @@ end
 function openWeazelRoofMenu()
   printDebug('openWeazelRoofMenu')
   local elements = {}    
-  if isWorking then 
-    if playerData.job.grade >= Config.journalistMinGrade then  table.insert(elements, {label = _U('rdc'),   value = 'rdc'}) end
-    if playerData.job.grade >= Config.copterMinGrade then table.insert(elements, {label = Config.vehicles.copter.label,  value = 'get_copt'}) end
-    --if playerData.job.grade >= Config.storageMinGrade then  table.insert(elements, {label = _U('storage'),   value = 'storage'}) end
-    --if playerData.job.grade >= Config.manageMinGrade then table.insert(elements, {label = _U('boss_actions'), value = 'boss_actions'}) end
-  else table.insert(elements, {label = _U('take_service'), value = 'job_wear'}) end
+  if playerData.job.grade >= Config.journalistMinGrade then  table.insert(elements, {label = _U('rdc'),   value = 'rdc'}) end
+  if playerData.job.grade >= Config.copterMinGrade then table.insert(elements, {label = Config.vehicles.copter.label,  value = 'get_copt'}) end
   
   ESX.UI.Menu.Open(
     'default', GetCurrentResourceName(), 'weazel_storage',
@@ -724,15 +720,15 @@ function openWeazelTools()
   ESX.UI.Menu.Open(
     'default', GetCurrentResourceName(), 'journaliste_gears',
     {
-      title    = 'matériel',
+      title    = _U('tools'),
       align    = 'top-left',
       elements = {
-        {label = 'fond vert',   value = 'prop_ld_greenscreen_01'},
-        {label = 'caméra fixe 1',   value = 'prop_tv_cam_02'},
-        {label = 'caméra fixe 2',   value = 'p_tv_cam_02_s'}, 
-        {label = 'micro',   value = 'v_club_roc_micstd'},
-        {label = 'micro 2',   value = 'v_ilev_fos_mic'},
-        {label = 'nettoyer',   value = 'clean'}
+        {label = 'Fond vert',   value = 'prop_ld_greenscreen_01'},
+        {label = 'CamÃ©ra fixe 1',   value = 'prop_tv_cam_02'},
+        {label = 'CamÃ©ra fixe 2',   value = 'p_tv_cam_02_s'}, 
+        {label = 'Micro 1',   value = 'v_club_roc_micstd'},
+        {label = 'Micro 2',   value = 'v_ilev_fos_mic'},
+        {label = 'Nettoyer',   value = 'clean'}
       },
     },
     function(data, menu)
@@ -761,7 +757,7 @@ function openWeazelTools()
         if dist < 4.0 then
           DeleteEntity(obj)
         else
-          ESX.ShowNotification('vous etes trop loin')
+          ESX.ShowNotification(U_('too_far'))
         end
       end
   
@@ -778,7 +774,7 @@ function openMobileweazelMenu()
   ESX.UI.Menu.Open(
     'default', GetCurrentResourceName(), 'mobile_weazel_actions',
     {
-      title    = _U('billing_title'),
+      title    = _U('mobile_title'),
       align    = 'top-left',
       elements = {
         {label = _U('billing'),   value = 'billing'},

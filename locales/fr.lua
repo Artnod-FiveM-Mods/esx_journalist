@@ -15,8 +15,9 @@ Locales['fr'] = {
   ['interim_sell']          = 'Appuyez sur ~INPUT_CONTEXT~ pour déposer un journal',
   ['journalist_sell']       = 'Appuyez sur ~INPUT_CONTEXT~ pour déposer des journaux',
   -- billing menu
-  ['billing_title']        = 'Facturation Weazel News',
+  ['mobile_title']        = 'Weazel News - Mobile',
   ['billing']              = 'Emettre une facture',
+  ['tools']                = 'Matériel',
   ['bill_amount']          = 'Montant de la facture',
   ['invalid_amount']       = 'Montant invalide',
   ['no_player_nearby']     = 'Aucune personne à proximité',  
@@ -45,6 +46,7 @@ Locales['fr'] = {
   ['bad_vehicle']          = 'Vous ne pouvez ranger que des ~r~véhicules de service~s~',
   ['not_good_veh']         = 'Vous devez être dans votre ~r~vehicule de service~s~',
   ['dont_cheat']           = '~r~Sortez~s~ et ~r~revenez~s~ dans la zone !',
+  ['too_far']              = 'vous êtes trop loin',
   -- notif storage
   ['have_withdrawn']       = 'Vous avez pris ~y~x%s~s~ ~b~%s~s~',
   ['have_deposited']       = 'Vous avez déposé ~y~x%s~s~ ~b~%s~s~',
