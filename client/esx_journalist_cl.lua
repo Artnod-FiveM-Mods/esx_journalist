@@ -872,7 +872,7 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(0)
-    if IsControlJustReleased(1, Keys["DELETE"]) and isWorking then
+    if IsControlJustReleased(1, Keys["DELETE"]) then
       if #currentRun == 0 then genRunList() end      
       if isRunning then
         stopNativeJob()

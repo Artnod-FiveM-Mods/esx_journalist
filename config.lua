@@ -25,7 +25,7 @@ Config.iCompanyRate  = 0.015625
 
 Config.jItemTime     = 2500
 Config.jItemDb_name  = "journaux"
-Config.jItemName     = "Sac de journaux"
+Config.jItemName     = "Paquet de journaux"
 Config.jItemAdd      = 1
 Config.jItemRemove   = 1
 Config.jItemPrice    = 10

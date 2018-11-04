@@ -25,5 +25,5 @@ INSERT INTO `job_grades` (`job_name`, `grade`, `name`, `label`, `salary`, `skin_
 
 INSERT INTO `items` (`name`, `label`, `limit`, `rare`, `can_remove`) VALUES
 	('journal', 'Journal', 50, 0, 1),
-	('journaux', 'Sac de Journaux', 5, 0, 1)
+	('journaux', 'Paquet de Journaux', 25, 0, 1)
 ;
