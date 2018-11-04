@@ -108,7 +108,7 @@ Citizen.CreateThread(function()
     end
     -- refresh zone
     for k,v in pairs(Config.zones) do
-      if playerData.job.name == Config.jobName and not v.enable then
+      if playerData.job.name == Config.jobName and v.enable == false then
         if k == 'cloakRoom' or k == 'vehicleSpawner' or k == 'vehicleSpawnPoint' then 
           v.enable = true
         elseif k == 'copterSpawner' then
@@ -116,7 +116,7 @@ Citizen.CreateThread(function()
         elseif k == 'copterSpawnPoint' then
           if playerData.job.grade >= Config.copterMinGrade then v.enable = true end
         end
-      elseif v.enable then v.enable = false end
+      elseif playerData.job.name ~= Config.jobName and v.enable then v.enable = false end
     end
   end
 end)
