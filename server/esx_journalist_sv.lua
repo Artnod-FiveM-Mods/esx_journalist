@@ -19,7 +19,7 @@ end
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 TriggerEvent('esx_phone:registerNumber', Config.jobName, 'Appel '..Config.companyName, false, false)
-TriggerEvent('esx_society:registerSociety', Config.companyName, Config.companyName, Config.companyLabel, Config.companyLabel, Config.companyLabel, {type = 'private'})
+TriggerEvent('esx_society:registerSociety', Config.jobName, Config.companyName, Config.companyLabel, Config.companyLabel, Config.companyLabel, {type = 'private'})
 
 -- get Storage
 ESX.RegisterServerCallback(Config.scriptName ..':getStockItems', function(source, cb)

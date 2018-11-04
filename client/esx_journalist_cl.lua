@@ -407,7 +407,7 @@ function openWeazelActionsMenu()
         TeleportFadeEffect(Config.zones.copterSpawner.gps)
       
       elseif data.current.value == 'boss_actions' then
-        TriggerEvent('esx_society:openBossMenu', 'journalist', function(data, menu)
+        TriggerEvent('esx_society:openBossMenu', Config.jobName, function(data, menu)
           menu.close()
         end)
       end
