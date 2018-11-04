@@ -101,7 +101,7 @@ Citizen.CreateThread(function()
     local playerPed = GetPlayerPed(-1)
     coords     = GetEntityCoords(playerPed)
     inVehicle  = IsPedInAnyVehicle(playerPed, 0)
-    -- job change
+    -- quit job
     if isWorking and playerData.job.name ~= Config.jobName then 
       isWorking = false
       isRunning = false
@@ -118,9 +118,9 @@ Citizen.CreateThread(function()
         end
       elseif playerData.job.name ~= Config.jobName and v.enable then v.enable = false end
     end
+    -- others
   end
 end)
-
 
 -- blip
 function drawBlip(gps, blipData)
