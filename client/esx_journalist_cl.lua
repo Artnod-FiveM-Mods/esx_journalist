@@ -30,7 +30,7 @@ end
 
 -- debug msg
 function printDebug(msg)
-  if Config.debug then print('['..Config.scriptName ..']    ' .. msg) end
+  if Config.debug then print('['..Config.scriptName ..'] ' .. msg) end
 end
 
 -- init
@@ -818,38 +818,27 @@ function randomizeList(list)
   end
   return newlist
 end
-
 function genRunList()
   local coordsList = {}
   if playerData.job.grade >= Config.journalistMinGrade then
     -- liste random des quartiers
     local listQuartier = {}
     for i=1, #Config.journalistBoxes,1 do table.insert(listQuartier, i) end
-    printDebug(json.encode(listQuartier))
     listQuartier = randomizeList(listQuartier)
     printDebug(json.encode(listQuartier))
     for i=1, #listQuartier, 1 do 
-      printDebug(json.encode(Config.journalistBoxes[listQuartier[i]]))
       local tmpList = randomizeList(Config.journalistBoxes[listQuartier[i]])
       for y=1, #tmpList,1 do table.insert(coordsList, tmpList[y]) end
-      printDebug(json.encode(tmpList))
-      printDebug('')
     end
-    printDebug(json.encode(coordsList))
   else
     local listQuartier = {}
     for i=1, #Config.interimBoxes,1 do table.insert(listQuartier, i) end
-    printDebug(json.encode(listQuartier))
     listQuartier = randomizeList(listQuartier)
     printDebug(json.encode(listQuartier))
     for i=1, #listQuartier, 1 do 
-      printDebug(json.encode(Config.interimBoxes[listQuartier[i]]))
       local tmpList = randomizeList(Config.interimBoxes[listQuartier[i]])
       for y=1, #tmpList,1 do table.insert(coordsList, tmpList[y]) end
-      printDebug(json.encode(tmpList))
-      printDebug('')
     end
-    printDebug(json.encode(coordsList))
   end 
   currentRun = coordsList
   printDebug('genRunList: ' .. #currentRun)
@@ -879,6 +868,7 @@ AddEventHandler(Config.scriptName ..':nextBoxes', function()
   end
   ESX.ShowNotification(_U('gps_info'))
   printDebug('nextBoxes: ' .. #currentRun)
+  printDebug(json.encode(currentRun[1]))
 end)
 function startNativeRun()
   printDebug('startNativeRun: ' .. #currentRun)
