@@ -329,7 +329,7 @@ function takeService(work, value)
   for i=1, #zoneList, 1 do
     if zoneList[i].name == 'printer' then 
       zoneList[i].enable = isWorking
-      break 
+      break
     end
   end
   if isWorking then
@@ -348,6 +348,14 @@ function takeService(work, value)
     -- ResetPedVisibleDamage(playerPed)
     -- ClearPedLastWeaponDamage(playerPed)  
   else
+    isRunning = false
+    for i=1, #zoneList, 1 do
+      if zoneList[i].name == 'interimBoxes' then 
+        zoneList[i].enable = false
+      elseif zoneList[i].name == 'journalistBoxes' then 
+        zoneList[i].enable = false
+      end
+    end
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
       local model = nil
       if skin.sex == 0 then model = GetHashKey("mp_m_freemode_01")
@@ -703,7 +711,7 @@ function openWeazelBilling()
         if closestPlayer == -1 or closestDistance > 3.0 then
           ESX.ShowNotification(_U('no_player_nearby'))
         else
-          TriggerServerEvent('esx_billing:sendBill', GetPlayerServerId(closestPlayer), Config.companyLabel, 'weazel', amount)
+          TriggerServerEvent('esx_billing:sendBill', GetPlayerServerId(closestPlayer), Config.companyLabel, Config.companyName, amount)
         end
         openMobileweazelMenu()
       end
@@ -797,23 +805,53 @@ function openMobileweazelMenu()
 end
 
 -- start/stop run
-function genRunList()
-  local list = {}
-  if playerData.job.grade >= Config.journalistMinGrade then list = Config.journalistBoxes[GetRandomIntInRange(1, #Config.journalistBoxes)]
-  else list = Config.interimBoxes[GetRandomIntInRange(1, #Config.interimBoxes)] end
-  local newList = {}
+function randomizeList(list)
+  local newlist = {}
   while #list > 0 do
     local index = GetRandomIntInRange(1, #list)
-    table.insert(newList, list[index])
+    table.insert(newlist, list[index])
     local tmpList = {}
     for i=1, #list, 1 do
-      if i ~= index then
-        table.insert(tmpList, list[i])
-      end
+      if i ~= index then table.insert(tmpList, list[i]) end
     end
     list = tmpList
   end
-  currentRun = newList
+  return newlist
+end
+
+function genRunList()
+  local coordsList = {}
+  if playerData.job.grade >= Config.journalistMinGrade then
+    -- liste random des quartiers
+    local listQuartier = {}
+    for i=1, #Config.journalistBoxes,1 do table.insert(listQuartier, i) end
+    printDebug(json.encode(listQuartier))
+    listQuartier = randomizeList(listQuartier)
+    printDebug(json.encode(listQuartier))
+    for i=1, #listQuartier, 1 do 
+      printDebug(json.encode(Config.journalistBoxes[listQuartier[i]]))
+      local tmpList = randomizeList(Config.journalistBoxes[listQuartier[i]])
+      for y=1, #tmpList,1 do table.insert(coordsList, tmpList[y]) end
+      printDebug(json.encode(tmpList))
+      printDebug('')
+    end
+    printDebug(json.encode(coordsList))
+  else
+    local listQuartier = {}
+    for i=1, #Config.interimBoxes,1 do table.insert(listQuartier, i) end
+    printDebug(json.encode(listQuartier))
+    listQuartier = randomizeList(listQuartier)
+    printDebug(json.encode(listQuartier))
+    for i=1, #listQuartier, 1 do 
+      printDebug(json.encode(Config.interimBoxes[listQuartier[i]]))
+      local tmpList = randomizeList(Config.interimBoxes[listQuartier[i]])
+      for y=1, #tmpList,1 do table.insert(coordsList, tmpList[y]) end
+      printDebug(json.encode(tmpList))
+      printDebug('')
+    end
+    printDebug(json.encode(coordsList))
+  end 
+  currentRun = coordsList
   printDebug('genRunList: ' .. #currentRun)
 end
 RegisterNetEvent(Config.scriptName ..':nextBoxes')
