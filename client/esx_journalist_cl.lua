@@ -719,6 +719,7 @@ function openWeazelRoofMenu()
   )
 end
 -- menu Vehicle
+
 function vehicleMenu()
   printDebug('vehicleMenu')
   local elements = {{label = Config.vehicles.bike.label, value = Config.vehicles.bike}}
@@ -741,13 +742,14 @@ function vehicleMenu()
         ESX.Game.SpawnVehicle(data.current.value.hash, gps, heading, function(vehicle)
           SetVehicleModColor_1(vehicle, 3, 0, 0)
           SetVehicleCustomPrimaryColour(vehicle, 0, 0, 0)
+          if data.current.value.label == 'Scooter' then SetVehicleCustomSecondaryColour(vehicle, 187, 11, 11) end
+          if data.current.value.label == 'Voiture Commercial' then SetVehicleCustomPrimaryColour(vehicle, 24, 8, 8) end
+          if data.current.value.label == 'Voiture Commercial' then SetVehicleCustomSecondaryColour(vehicle, 0, 0, 0) end
           WashDecalsFromVehicle(vehicle, 1.0)
           SetVehicleDirtLevel(vehicle)
           TaskWarpPedIntoVehicle(playerPed, vehicle, - 1)
           SetVehicleNumberPlateText(vehicle, plate)
         end)
-        local vhc = GetVehiclePedIsUsing(playerPed)
-        
         menu.close()
         TriggerEvent(Config.scriptName ..':hasExitedMarker', lastZone)
     end,
@@ -757,7 +759,6 @@ function vehicleMenu()
     end
 )
 end
-
 -- menu facturation
 function openWeazelBilling()
   printDebug('openWeazelBilling')

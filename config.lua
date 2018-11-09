@@ -41,7 +41,7 @@ Config.vehicles = {
   },
   van = {
     label   = 'Camionette',
-    hash    = 1162065741
+    hash    = 0x4543B74D
   },
   bossCar = {
     label   = 'Voiture Commercial',
