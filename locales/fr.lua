@@ -15,18 +15,25 @@ Locales['fr'] = {
   ['interim_sell']          = 'Appuyez sur ~INPUT_CONTEXT~ pour déposer un journal',
   ['journalist_sell']       = 'Appuyez sur ~INPUT_CONTEXT~ pour déposer des journaux',
   -- billing menu
-  ['mobile_title']        = 'Weazel News - Mobile',
+  ['mobile_title']         = 'Weazel News - Mobile',
   ['billing']              = 'Emettre une facture',
   ['tools']                = 'Matériel',
   ['bill_amount']          = 'Montant de la facture',
   ['invalid_amount']       = 'Montant invalide',
   ['no_player_nearby']     = 'Aucune personne à proximité',  
-  -- cloackroom menu
+  -- weazel menu
   ['take_service']         = 'Prendre son service',
   ['end_service']          = 'Terminer son service',
   ['storage']              = 'Stockage',
   ['roof']                 = 'Acces au toit',
   ['boss_actions']         = 'Action Patron',
+  -- cloackroom menu
+  ['cloakroom_title']      = 'Vestiaire',
+  ['wear1']                = 'Costume 3 pièces',
+  ['wear2']                = 'Tenue safari',
+  ['wear3']                = 'Tenue discrète',
+  ['wear4']                = 'Tenue de travail',
+  ['wear5']                = 'Tenue perso',
   -- inventory menu
   ['deposit_stock']        = 'Déposer Stock',
   ['withdraw_stock']       = 'Prendre Stock',
@@ -34,8 +41,8 @@ Locales['fr'] = {
   ['you_removed']          = 'vous avez retiré x',
   ['you_added']            = 'Vous avez ajouté x',
   -- roof menu
-  ['roof_menu_title']   = 'Weazel : Toit',
-  ['rdc']               = 'Prendre l\'ascenseur',
+  ['roof_menu_title']      = 'Weazel : Toit',
+  ['rdc']                  = 'Prendre l\'ascenseur',
   -- vehicle menu
   ['vehicle_menu_title']   = 'Véhicule de service',
   --notif general
@@ -52,8 +59,8 @@ Locales['fr'] = {
   ['have_deposited']       = 'Vous avez déposé ~y~x%s~s~ ~b~%s~s~',
   ['player_cannot_hold']   = 'Vous ~r~n\'avez pas~s~ assez ~y~d\'espace libre~s~ dans vos poches!',
   -- notif native run
-  ['start_job']            = 'Utilisez la touche ~b~[SUPPR]~s~ pour commencer votre ~b~tournée~s~',
-  ['cancel_mission']       = 'Vous avez ~r~annulé~s~ la mission',
+  ['start_job']            = 'Recupez des journaux et ~b~[SUPPR]~s~ pour commencer votre ~b~tournée~s~',
+  ['cancel_mission']       = 'Vous avez ~r~arreté~s~ la tournée',
   ['gps_info']             = 'La centrale vous a indiqué une boite à journaux sur votre ~y~GPS~s~',
   ['harvest_start']        = 'Collecte des journaux ~g~en cours...~s~',
   ['go_sell']              = 'Action ~r~impossible~s~ : Allez revendre les ~b~journaux~s~',

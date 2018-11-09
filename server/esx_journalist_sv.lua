@@ -18,7 +18,7 @@ function printDebug(msg)
 end
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-TriggerEvent('esx_phone:registerNumber', Config.jobName, 'Appel '..Config.companyName, false, false)
+TriggerEvent('esx_phone:registerNumber', Config.jobName, 'Client '..Config.companyName, false, false)
 TriggerEvent('esx_society:registerSociety', Config.jobName, Config.companyName, Config.companyLabel, Config.companyLabel, Config.companyLabel, {type = 'private'})
 
 -- get Storage
@@ -130,10 +130,12 @@ function interimSell(source)
       else
         xPlayer.removeInventoryItem(Config.iItemDb_name, Config.iItemRemove)
         xPlayer.addMoney(Config.iItemPrice)
-        local companyPrice = Config.iItemPrice * Config.iCompanyRate
-        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyLabel, function(account)account.addMoney(math.floor(companyPrice))end )
+        local companyPrice = math.floor(Config.iItemPrice * Config.iCompanyRate)
+        local gouvTaxe = math.floor(companyPrice * Config.gouvRate)
+        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyLabel, function(account) account.addMoney(companyPrice) end)
+        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyTaxeLabel, function(account) account.addMoney(gouvTaxe) end)
         TriggerClientEvent('esx:showNotification', source, _U('you_earned', Config.iItemPrice))
-        TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', math.floor(companyPrice)))
+        TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', companyPrice))
         TriggerClientEvent('esx_journalist:nextBoxes', source)
       end
       playersInterimSell[source] = false
@@ -222,8 +224,10 @@ function journalistSell(source)
       else
         xPlayer.removeInventoryItem(Config.jItemDb_name, Config.jItemRemove)
         xPlayer.addMoney(Config.jItemPrice)
-        local companyPrice = Config.jItemPrice * Config.jCompanyRate
-        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyLabel, function(account)account.addMoney(math.floor(companyPrice))end )
+        local companyPrice = math.floor(Config.jItemPrice * Config.jCompanyRate)
+        local gouvTaxe = math.floor(companyPrice * Config.gouvRate)
+        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyLabel, function(account)account.addMoney(companyPrice)end )
+        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyTaxeLabel, function(account) account.addMoney(gouvTaxe) end)
         TriggerClientEvent('esx:showNotification', source, _U('you_earned', Config.jItemPrice))
         TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', math.floor(companyPrice)))
         TriggerClientEvent('esx_journalist:nextBoxes', source)

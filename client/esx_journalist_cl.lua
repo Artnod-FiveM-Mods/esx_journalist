@@ -333,20 +333,42 @@ function takeService(work, value)
     end
   end
   if isWorking then
-    local playerPed = GetPlayerPed(-1)
-    -- TriggerEvent('skinchanger:getSkin', function(skin)
-    --   if skin.sex == 0 then
-    --     if Config.uniforms[value].male ~= nil then TriggerEvent('skinchanger:loadClothes', skin, Config.uniforms[value].male)
-    --     else ESX.ShowNotification(_U('no_outfit')) end
-    --   else
-    --     if Config.uniforms[value].female ~= nil then TriggerEvent('skinchanger:loadClothes', skin, Config.uniforms[value].female)
-    --     else ESX.ShowNotification(_U('no_outfit')) end
-    --   end
-    -- end)
-    -- -- SetPedArmour(playerPed, 0)
-    -- ClearPedBloodDamage(playerPed)
-    -- ResetPedVisibleDamage(playerPed)
-    -- ClearPedLastWeaponDamage(playerPed)  
+    if value == 'citizen_wear' then 
+      ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
+        local model = nil
+        if skin.sex == 0 then model = GetHashKey("mp_m_freemode_01")
+        else model = GetHashKey("mp_f_freemode_01") end
+        RequestModel(model)
+        while not HasModelLoaded(model) do
+          RequestModel(model)
+          Citizen.Wait(1)
+        end
+        SetPlayerModel(PlayerId(), model)
+        SetModelAsNoLongerNeeded(model)
+        TriggerEvent('skinchanger:loadSkin', skin)
+        TriggerEvent('esx:restoreLoadout')
+        local playerPed = GetPlayerPed(-1)
+        -- SetPedArmour(playerPed, 0)
+        ClearPedBloodDamage(playerPed)
+        ResetPedVisibleDamage(playerPed)
+        ClearPedLastWeaponDamage(playerPed)
+      end)
+    else
+      local playerPed = GetPlayerPed(-1)
+      TriggerEvent('skinchanger:getSkin', function(skin)
+        if skin.sex == 0 then
+          if Config.uniforms[value].male ~= nil then TriggerEvent('skinchanger:loadClothes', skin, Config.uniforms[value].male)
+          else ESX.ShowNotification(_U('no_outfit')) end
+        else
+          if Config.uniforms[value].female ~= nil then TriggerEvent('skinchanger:loadClothes', skin, Config.uniforms[value].female)
+          else ESX.ShowNotification(_U('no_outfit')) end
+        end
+      end)
+      -- SetPedArmour(playerPed, 0)
+      ClearPedBloodDamage(playerPed)
+      ResetPedVisibleDamage(playerPed)
+      ClearPedLastWeaponDamage(playerPed)  
+    end
   else
     isRunning = false
     for i=1, #zoneList, 1 do
@@ -379,11 +401,51 @@ function takeService(work, value)
 end
 
 -- menu weazel
+function openCloakroomMenu()
+  printDebug('openCloakroomMenu')
+  local elements = {}    
+  if isWorking then table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'}) end
+  table.insert(elements, {label = _U('wear1'), value = 'wear1'})
+  table.insert(elements, {label = _U('wear2'), value = 'wear2'})
+  table.insert(elements, {label = _U('wear3'), value = 'wear3'})
+  table.insert(elements, {label = _U('wear4'), value = 'wear4'})
+  table.insert(elements, {label = _U('wear5'), value = 'wear5'})
+  ESX.UI.Menu.Open(
+    'default', GetCurrentResourceName(), 'weazel_cloakroom',
+    {
+      title    = _U('cloakroom_title'),
+      elements = elements
+    },
+    function(data, menu)
+      if data.current.value == 'citizen_wear' then
+        menu.close()
+        takeService(false, data.current.value)
+        openCloakroomMenu()
+        ESX.ShowNotification(_U('end_service_notif'))
+      else
+        menu.close()
+        if data.current.value == 'wear5' then takeService(true, 'citizen_wear')
+        else takeService(true, data.current.value) end
+        openCloakroomMenu()
+        ESX.ShowNotification(_U('take_service_notif'))
+        ESX.ShowNotification(_U('start_job'))
+      end
+    end,
+    function(data, menu)
+      menu.close()
+      openWeazelActionsMenu()
+    end
+  )
+end
 function openWeazelActionsMenu()
   printDebug('openWeazelActionsMenu')
   local elements = {}  
-  if isWorking then table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'})
-  else table.insert(elements, {label = _U('take_service'), value = 'job_wear'}) end
+  if playerData.job.grade >= Config.journalistMinGrade then  
+    table.insert(elements, {label = _U('cloakroom_title'), value = 'cloakroom'})
+  else
+    if isWorking then table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'})
+    else table.insert(elements, {label = _U('take_service'), value = 'job_wear'}) end
+  end
   if playerData.job.grade >= Config.storageMinGrade then  table.insert(elements, {label = _U('storage'),   value = 'storage'}) end
   if playerData.job.grade >= Config.journalistMinGrade then  table.insert(elements, {label = _U('rdc'),   value = 'roof'}) end
   if playerData.job.grade >= Config.manageMinGrade then table.insert(elements, {label = _U('boss_actions'), value = 'boss_actions'}) end
@@ -406,6 +468,9 @@ function openWeazelActionsMenu()
         openWeazelActionsMenu()
         ESX.ShowNotification(_U('take_service_notif'))
         ESX.ShowNotification(_U('start_job'))
+      elseif data.current.value == 'cloakroom' then
+        menu.close()
+        openCloakroomMenu()
       elseif data.current.value == 'storage' then
         menu.close()
         openWeazelStorageMenu()
@@ -900,7 +965,7 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(0)
-    if IsControlJustReleased(1, Keys["DELETE"]) then
+    if IsControlJustReleased(1, Keys["DELETE"]) and isWorking then
       if #currentRun == 0 then genRunList() end      
       if isRunning then
         stopNativeJob()

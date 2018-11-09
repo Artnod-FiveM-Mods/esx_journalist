@@ -3,15 +3,16 @@ USE `essentialmode`;
 INSERT INTO `jobs` (`name`, `label`, `whitelisted`) VALUES
 	('journalist', 'Weazel News', 0)
 ;
-INSERT INTO `datastore` (name, label, shared) VALUES
-	('society_weazel', 'Weasel News', 1)
+INSERT INTO `datastore` (`name`, `label`, `shared`) VALUES
+	('society_weazel', 'Weasel News', 1),
 ;
 
-INSERT INTO `addon_account` (name, label, shared) VALUES
-	('society_weazel', 'Weasel News', 1)
+INSERT INTO `addon_account` (`name`, `label`, `shared`) VALUES
+	('society_weazel', 'Weasel News', 1),
+	('society_taxe_weazel', 'Weasel News Taxe', 1)
 ;
 
-INSERT INTO `addon_inventory` (name, label, shared) VALUES
+INSERT INTO `addon_inventory` (`name`, `label`, `shared`) VALUES
 	('society_weazel', 'Weasel News', 1)
 ;
 

@@ -3,15 +3,18 @@ Config.Locale     = 'fr'
 Config.debug      = true
 Config.scriptName = "esx_journalist"
 
-Config.jobName      = "journalist"
-Config.companyLabel = "society_weazel"
-Config.companyName  = "Weazel News"
-Config.platePrefix  = "WEAZEL"
+Config.jobName          = "journalist"
+Config.companyLabel     = "society_weazel"
+Config.companyTaxeLabel = "society_taxe_weazel"
+Config.companyName      = "Weazel News"
+Config.platePrefix      = "WEAZEL"
 
 Config.journalistMinGrade = 1
 Config.storageMinGrade    = 2
 Config.copterMinGrade     = 3
 Config.manageMinGrade     = 4
+
+Config.gouvRate = 0.05
 
 -- interim run
 Config.iItemTime     = 1500
@@ -242,8 +245,8 @@ Config.journalistBoxes = {
 
 Config.vehicles = {
   bike = {
-    label   = 'Vélo',
-    hash    = "Cruiser"
+    label   = 'Scooter',
+    hash    = "Faggio"
   },
   van = {
     label   = 'Camionette',
@@ -260,7 +263,7 @@ Config.vehicles = {
 }
 
 Config.uniforms = {
-  job_wear = {
+  wear1 = {
     male = {
       ['tshirt_1'] = 131, ['tshirt_2'] = 0,
       ['torso_1']  = 50 , ['torso_2']  = 4,
@@ -286,4 +289,82 @@ Config.uniforms = {
       ['bags_1']   = 0  , ['bags_2']   = 0
     }
   },
+  wear2 = {
+    male = {
+      ['tshirt_1'] = 131, ['tshirt_2'] = 0,
+      ['torso_1']  = 50 , ['torso_2']  = 4,
+      ['decals_1'] = 0  , ['decals_2'] = 0,
+      ['arms']     = 22 ,
+      ['pants_1']  = 25 , ['pants_2']  = 0,
+      ['shoes_1']  = 51 , ['shoes_2']  = 0,
+      ['helmet_1'] = 58 , ['helmet_2'] = 1,
+      ['chain_1']  = 0  , ['chain_2']  = 0,
+      ['ears_1']   = -1 , ['ears_2']   = 0,
+      ['bags_1']   = 0  , ['bags_2']   = 0
+    },
+    female = {
+      ['tshirt_1'] = 161, ['tshirt_2'] = 0,
+      ['torso_1']  = 43 , ['torso_2']  = 4,
+      ['decals_1'] = 0  , ['decals_2'] = 0,
+      ['arms']     = 23 ,
+      ['pants_1']  = 6  , ['pants_2']  = 0,
+      ['shoes_1']  = 52 , ['shoes_2']  = 0,
+      ['helmet_1'] = -1 , ['helmet_2'] = 0,
+      ['chain_1']  = 0  , ['chain_2']  = 0,
+      ['ears_1']   = -1 , ['ears_2']   = 0,
+      ['bags_1']   = 0  , ['bags_2']   = 0
+    }
+  },
+  wear3 = {
+    male = {
+      ['tshirt_1'] = 131, ['tshirt_2'] = 0,
+      ['torso_1']  = 50 , ['torso_2']  = 4,
+      ['decals_1'] = 0  , ['decals_2'] = 0,
+      ['arms']     = 22 ,
+      ['pants_1']  = 25 , ['pants_2']  = 0,
+      ['shoes_1']  = 51 , ['shoes_2']  = 0,
+      ['helmet_1'] = 58 , ['helmet_2'] = 1,
+      ['chain_1']  = 0  , ['chain_2']  = 0,
+      ['ears_1']   = -1 , ['ears_2']   = 0,
+      ['bags_1']   = 0  , ['bags_2']   = 0
+    },
+    female = {
+      ['tshirt_1'] = 161, ['tshirt_2'] = 0,
+      ['torso_1']  = 43 , ['torso_2']  = 4,
+      ['decals_1'] = 0  , ['decals_2'] = 0,
+      ['arms']     = 23 ,
+      ['pants_1']  = 6  , ['pants_2']  = 0,
+      ['shoes_1']  = 52 , ['shoes_2']  = 0,
+      ['helmet_1'] = -1 , ['helmet_2'] = 0,
+      ['chain_1']  = 0  , ['chain_2']  = 0,
+      ['ears_1']   = -1 , ['ears_2']   = 0,
+      ['bags_1']   = 0  , ['bags_2']   = 0
+    }
+  },
+  wear4 = {
+    male = {
+      ['tshirt_1'] = 131, ['tshirt_2'] = 0,
+      ['torso_1']  = 50 , ['torso_2']  = 4,
+      ['decals_1'] = 0  , ['decals_2'] = 0,
+      ['arms']     = 22 ,
+      ['pants_1']  = 25 , ['pants_2']  = 0,
+      ['shoes_1']  = 51 , ['shoes_2']  = 0,
+      ['helmet_1'] = 58 , ['helmet_2'] = 1,
+      ['chain_1']  = 0  , ['chain_2']  = 0,
+      ['ears_1']   = -1 , ['ears_2']   = 0,
+      ['bags_1']   = 0  , ['bags_2']   = 0
+    },
+    female = {
+      ['tshirt_1'] = 161, ['tshirt_2'] = 0,
+      ['torso_1']  = 43 , ['torso_2']  = 4,
+      ['decals_1'] = 0  , ['decals_2'] = 0,
+      ['arms']     = 23 ,
+      ['pants_1']  = 6  , ['pants_2']  = 0,
+      ['shoes_1']  = 52 , ['shoes_2']  = 0,
+      ['helmet_1'] = -1 , ['helmet_2'] = 0,
+      ['chain_1']  = 0  , ['chain_2']  = 0,
+      ['ears_1']   = -1 , ['ears_2']   = 0,
+      ['bags_1']   = 0  , ['bags_2']   = 0
+    }
+  }
 }
