@@ -464,7 +464,7 @@ function openWeazelActionsMenu()
         ESX.ShowNotification(_U('end_service_notif'))
       elseif data.current.value == 'job_wear' then
         menu.close()
-        takeService(true, data.current.value)
+        takeService(true, 'wear4')
         openWeazelActionsMenu()
         ESX.ShowNotification(_U('take_service_notif'))
         ESX.ShowNotification(_U('start_job'))

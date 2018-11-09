@@ -59,7 +59,7 @@ Locales['fr'] = {
   ['have_deposited']       = 'Vous avez déposé ~y~x%s~s~ ~b~%s~s~',
   ['player_cannot_hold']   = 'Vous ~r~n\'avez pas~s~ assez ~y~d\'espace libre~s~ dans vos poches!',
   -- notif native run
-  ['start_job']            = 'Recupez des journaux et ~b~[SUPPR]~s~ pour commencer votre ~b~tournée~s~',
+  ['start_job']            = 'Récupérez des journaux et ~b~[SUPPR]~s~ pour commencer votre ~b~tournée~s~',
   ['cancel_mission']       = 'Vous avez ~r~arreté~s~ la tournée',
   ['gps_info']             = 'La centrale vous a indiqué une boite à journaux sur votre ~y~GPS~s~',
   ['harvest_start']        = 'Collecte des journaux ~g~en cours...~s~',
