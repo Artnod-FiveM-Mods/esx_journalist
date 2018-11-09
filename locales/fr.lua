@@ -17,7 +17,8 @@ Locales['fr'] = {
   -- billing menu
   ['mobile_title']         = 'Weazel News - Mobile',
   ['billing']              = 'Emettre une facture',
-  ['tools']                = 'Matériel',
+  ['tools']                = 'Matériels fixe',
+  ['mobile_tools']         = 'Matériels mobile',
   ['bill_amount']          = 'Montant de la facture',
   ['invalid_amount']       = 'Montant invalide',
   ['no_player_nearby']     = 'Aucune personne à proximité',  

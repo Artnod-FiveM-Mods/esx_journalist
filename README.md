@@ -11,7 +11,8 @@ Weazel News Company
   - esx_datastore,
   - esx_society,
   - esx_billing,
-  - esx_phone
+  - esx_phone,
+  - Weazel-News-Cam
 
 # Getting Started
 

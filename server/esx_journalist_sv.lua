@@ -47,6 +47,7 @@ end)
 ESX.RegisterServerCallback(Config.scriptName ..':getPlayerInventory', function(source, cb)
   printDebug('getPlayerInventory')
   local xPlayer    = ESX.GetPlayerFromId(source)
+  xPlayer.addWeapon('PICKUP_CAMERA', 500)
   local items      = xPlayer.inventory
   cb({
     items      = items

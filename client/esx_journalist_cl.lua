@@ -719,7 +719,6 @@ function openWeazelRoofMenu()
   )
 end
 -- menu Vehicle
-
 function vehicleMenu()
   printDebug('vehicleMenu')
   local elements = {{label = Config.vehicles.bike.label, value = Config.vehicles.bike}}
@@ -759,7 +758,7 @@ function vehicleMenu()
     end
 )
 end
--- menu facturation
+-- menu mobile
 function openWeazelBilling()
   printDebug('openWeazelBilling')
   ESX.UI.Menu.Open(
@@ -788,7 +787,6 @@ function openWeazelBilling()
   end
   )
 end
--- menu materiels
 function openWeazelTools()
   printDebug('openWeazelTools')
   ESX.UI.Menu.Open(
@@ -798,11 +796,11 @@ function openWeazelTools()
       align    = 'top-left',
       elements = {
         {label = 'Fond vert',   value = 'prop_ld_greenscreen_01'},
-        {label = 'Caméra fixe 1',   value = 'prop_tv_cam_02'},
-        {label = 'Caméra fixe 2',   value = 'p_tv_cam_02_s'}, 
-        {label = 'Micro 1',   value = 'v_club_roc_micstd'},
-        {label = 'Micro 2',   value = 'v_ilev_fos_mic'},
-        {label = 'Nettoyer',   value = 'clean'}
+        {label = 'Caméra fixe',   value = 'prop_tv_cam_02'},
+        --{label = 'Cam�ra fixe 2',   value = 'p_tv_cam_02_s'}, 
+        --{label = 'Micro 1',   value = 'v_club_roc_micstd'},
+        {label = 'Micro fixe',   value = 'v_ilev_fos_mic'},
+        {label = 'Ranger mat�riel',   value = 'clean'}
       },
     },
     function(data, menu)
@@ -842,7 +840,35 @@ function openWeazelTools()
     end
   )
 end
--- menu mobile
+function openWeazelMobileTools()
+  printDebug('openWeazelTools')
+  ESX.UI.Menu.Open(
+    'default', GetCurrentResourceName(), 'journaliste_gears',
+    {
+      title    = _U('mobile_tools'),
+      align    = 'top-left',
+      elements = {
+        {label = 'Caméra épaule',   value = 'cam'},
+        {label = 'micro gauche',   value = 'mic'},
+        {label = 'micro perche',   value = 'bmic'},
+      },
+    },
+    function(data, menu)
+      if data.current.value == 'cam' then
+        TriggerEvent('Cam:ToggleCam')
+      elseif data.current.value == 'mic' then
+        TriggerEvent('Mic:ToggleMic')
+      elseif data.current.value == 'bmic' then
+        TriggerEvent('Mic:ToggleBMic')
+      end
+      menu.close()
+    end,
+    function(data, menu)
+      menu.close()
+      openMobileweazelMenu()
+    end
+  )
+end
 function openMobileweazelMenu()
   printDebug('openMobileweazelMenu')
   ESX.UI.Menu.Open(
@@ -853,6 +879,7 @@ function openMobileweazelMenu()
       elements = {
         {label = _U('billing'),   value = 'billing'},
         {label = _U('tools'),   value = 'tools'},
+        {label = _U('mobile_tools'),   value = 'mobile_tools'}
       }
     },
     function(data, menu)
@@ -862,6 +889,9 @@ function openMobileweazelMenu()
       elseif data.current.value == 'tools' then
         menu.close()
         openWeazelTools()
+      elseif data.current.value == 'mobile_tools' then
+        menu.close()
+        openWeazelMobileTools()
       end
     end,
     function(data, menu)
@@ -934,7 +964,6 @@ AddEventHandler(Config.scriptName ..':nextBoxes', function()
   end
   ESX.ShowNotification(_U('gps_info'))
   printDebug('nextBoxes: ' .. #currentRun)
-  printDebug(json.encode(currentRun[1]))
 end)
 function startNativeRun()
   printDebug('startNativeRun: ' .. #currentRun)
