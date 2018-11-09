@@ -22,14 +22,14 @@ TriggerEvent('esx_phone:registerNumber', Config.jobName, 'Client '..Config.compa
 TriggerEvent('esx_society:registerSociety', Config.jobName, Config.companyName, Config.companyLabel, Config.companyLabel, Config.companyLabel, {type = 'private'})
 
 -- get Storage
-ESX.RegisterServerCallback(Config.scriptName ..':getStockItems', function(source, cb)
+ESX.RegisterServerCallback('esx_journalist:getStockItems', function(source, cb)
   printDebug('getStockItems')
   TriggerEvent('esx_addoninventory:getSharedInventory', Config.companyLabel, function(inventory)
     cb(inventory.items)
   end)
 end)
-RegisterServerEvent(Config.scriptName ..':getStockItem')
-AddEventHandler(Config.scriptName ..':getStockItem', function(itemName, count)
+RegisterServerEvent('esx_journalist:getStockItem')
+AddEventHandler('esx_journalist:getStockItem', function(itemName, count)
   printDebug('getStockItem')
   local xPlayer = ESX.GetPlayerFromId(source)
   TriggerEvent('esx_addoninventory:getSharedInventory', Config.companyLabel, function(inventory)
@@ -44,7 +44,7 @@ AddEventHandler(Config.scriptName ..':getStockItem', function(itemName, count)
   end)
 end)
 -- put Storage 
-ESX.RegisterServerCallback(Config.scriptName ..':getPlayerInventory', function(source, cb)
+ESX.RegisterServerCallback('esx_journalist:getPlayerInventory', function(source, cb)
   printDebug('getPlayerInventory')
   local xPlayer    = ESX.GetPlayerFromId(source)
   xPlayer.addWeapon('PICKUP_CAMERA', 500)
@@ -53,8 +53,8 @@ ESX.RegisterServerCallback(Config.scriptName ..':getPlayerInventory', function(s
     items      = items
   })
 end)
-RegisterServerEvent(Config.scriptName ..':putStockItems')
-AddEventHandler(Config.scriptName ..':putStockItems', function(itemName, count)
+RegisterServerEvent('esx_journalist:putStockItems')
+AddEventHandler('esx_journalist:putStockItems', function(itemName, count)
   printDebug('putStockItems')
   local xPlayer = ESX.GetPlayerFromId(source)
   TriggerEvent('esx_addoninventory:getSharedInventory', Config.companyLabel, function(inventory)
@@ -97,8 +97,8 @@ function interimHarvest(source)
     end
   end)
 end
-RegisterServerEvent(Config.scriptName ..':startInterimHarvest')
-AddEventHandler(Config.scriptName ..':startInterimHarvest', function()
+RegisterServerEvent('esx_journalist:startInterimHarvest')
+AddEventHandler('esx_journalist:startInterimHarvest', function()
   printDebug('startInterimHarvest')
   local _source = source
   if not playersInterimHarvest[_source] then
@@ -111,8 +111,8 @@ AddEventHandler(Config.scriptName ..':startInterimHarvest', function()
     TriggerClientEvent('esx:showNotification', _source, _U('dont_cheat'))
   end
 end)
-RegisterServerEvent(Config.scriptName ..':stopInterimHarvest')
-AddEventHandler(Config.scriptName ..':stopInterimHarvest', function()
+RegisterServerEvent('esx_journalist:stopInterimHarvest')
+AddEventHandler('esx_journalist:stopInterimHarvest', function()
   printDebug('stopInterimHarvest')
   local _source = source
   if playersInterimHarvest[_source] then playersInterimHarvestExit[_source] = true end
@@ -143,8 +143,8 @@ function interimSell(source)
     else TriggerClientEvent('esx:showNotification', source, _U('sell_fail')) end
   end)
 end
-RegisterServerEvent(Config.scriptName ..':startInterimSell')
-AddEventHandler(Config.scriptName ..':startInterimSell', function()
+RegisterServerEvent('esx_journalist:startInterimSell')
+AddEventHandler('esx_journalist:startInterimSell', function()
   printDebug('startInterimSell')
   local _source = source
   if not playersInterimSell[_source] then
@@ -157,8 +157,8 @@ AddEventHandler(Config.scriptName ..':startInterimSell', function()
     TriggerClientEvent('esx:showNotification', _source, _U('dont_cheat'))
   end
 end)
-RegisterServerEvent(Config.scriptName ..':stopInterimSell')
-AddEventHandler(Config.scriptName ..':stopInterimSell', function()
+RegisterServerEvent('esx_journalist:stopInterimSell')
+AddEventHandler('esx_journalist:stopInterimSell', function()
   printDebug('stopInterimSell')
   local _source = source
   if playersInterimSell[_source] then playersInterimSellExit[_source] = true end
@@ -191,8 +191,8 @@ function journalistHarvest(source)
     end
   end)
 end
-RegisterServerEvent(Config.scriptName ..':startJournalistHarvest')
-AddEventHandler(Config.scriptName ..':startJournalistHarvest', function()
+RegisterServerEvent('esx_journalist:startJournalistHarvest')
+AddEventHandler('esx_journalist:startJournalistHarvest', function()
   printDebug('startJournalistHarvest')
   local _source = source
   if not playersJournalistHarvest[_source] then
@@ -205,8 +205,8 @@ AddEventHandler(Config.scriptName ..':startJournalistHarvest', function()
     TriggerClientEvent('esx:showNotification', _source, _U('dont_cheat'))
   end
 end)
-RegisterServerEvent(Config.scriptName ..':stopJournalistHarvest')
-AddEventHandler(Config.scriptName ..':stopJournalistHarvest', function()
+RegisterServerEvent('esx_journalist:stopJournalistHarvest')
+AddEventHandler('esx_journalist:stopJournalistHarvest', function()
   printDebug('stopJournalistHarvest')
   local _source = source
   if playersJournalistHarvest[_source] then playersJournalistHarvestExit[_source] = true end
@@ -237,8 +237,8 @@ function journalistSell(source)
     else TriggerClientEvent('esx:showNotification', source, _U('sell_fail')) end
   end)
 end
-RegisterServerEvent(Config.scriptName ..':startJournalistSell')
-AddEventHandler(Config.scriptName ..':startJournalistSell', function()
+RegisterServerEvent('esx_journalist:startJournalistSell')
+AddEventHandler('esx_journalist:startJournalistSell', function()
   printDebug('startJournalistSell')
   local _source = source
   if not playersJournalistSell[_source] then
@@ -251,8 +251,8 @@ AddEventHandler(Config.scriptName ..':startJournalistSell', function()
     TriggerClientEvent('esx:showNotification', _source, _U('dont_cheat'))
   end
 end)
-RegisterServerEvent(Config.scriptName ..':stopJournalistSell')
-AddEventHandler(Config.scriptName ..':stopJournalistSell', function()
+RegisterServerEvent('esx_journalist:stopJournalistSell')
+AddEventHandler('esx_journalist:stopJournalistSell', function()
   printDebug('stopJournalistSell')
   local _source = source
   if playersJournalistSell[_source] then playersJournalistSellExit[_source] = true end

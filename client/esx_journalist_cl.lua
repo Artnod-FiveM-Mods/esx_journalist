@@ -183,7 +183,7 @@ Citizen.CreateThread(function()
 end)
 
 -- enter/exit zone
-AddEventHandler(Config.scriptName ..':hasEnteredMarker', function(zone)
+AddEventHandler('esx_journalist:hasEnteredMarker', function(zone)
   printDebug('hasEnteredMarker: ' .. zone.name)
   if zone.name == 'cloakRoom' then
     currentAction = 'weazelMenu'
@@ -226,13 +226,13 @@ AddEventHandler(Config.scriptName ..':hasEnteredMarker', function(zone)
     currentActionData = {}
   end
 end)
-AddEventHandler(Config.scriptName ..':hasExitedMarker', function(zone)
+AddEventHandler('esx_journalist:hasExitedMarker', function(zone)
   printDebug('hasExitedMarker: ' .. zone.name)
   if zone.name == 'printer' then 
-    TriggerServerEvent(Config.scriptName ..':stopJournalistHarvest') 
-    TriggerServerEvent(Config.scriptName ..':stopInterimHarvest')
-  elseif zone.name == 'interimBoxes' then TriggerServerEvent(Config.scriptName ..':stopInterimSell') 
-  elseif zone.name == 'journalistBoxes' then TriggerServerEvent(Config.scriptName ..':stopJournalistSell')end
+    TriggerServerEvent('esx_journalist:stopJournalistHarvest') 
+    TriggerServerEvent('esx_journalist:stopInterimHarvest')
+  elseif zone.name == 'interimBoxes' then TriggerServerEvent('esx_journalist:stopInterimSell') 
+  elseif zone.name == 'journalistBoxes' then TriggerServerEvent('esx_journalist:stopJournalistSell')end
   currentAction    = nil
   currentActionMsg = ''
   ESX.UI.Menu.CloseAll()
@@ -253,11 +253,11 @@ Citizen.CreateThread(function()
       if isInMarker and not alreadyInZone then
         alreadyInZone = true
         lastZone      = currentZone
-        TriggerEvent(Config.scriptName ..':hasEnteredMarker', currentZone)
+        TriggerEvent('esx_journalist:hasEnteredMarker', currentZone)
       end
       if not isInMarker and alreadyInZone then
         alreadyInZone = false
-        TriggerEvent(Config.scriptName ..':hasExitedMarker', lastZone)
+        TriggerEvent('esx_journalist:hasExitedMarker', lastZone)
       end
     end
   end
@@ -289,14 +289,14 @@ Citizen.CreateThread(function()
           
         elseif currentAction == 'harvestRun' then
           if not inVehicle then
-            if playerData.job.grade >= Config.journalistMinGrade then TriggerServerEvent(Config.scriptName ..':startJournalistHarvest')
-            else TriggerServerEvent(Config.scriptName ..':startInterimHarvest') end
+            if playerData.job.grade >= Config.journalistMinGrade then TriggerServerEvent('esx_journalist:startJournalistHarvest')
+            else TriggerServerEvent('esx_journalist:startInterimHarvest') end
           else ESX.ShowNotification(_U('in_vehicle')) end
           
         elseif currentAction == 'sellRun' then
           if not inVehicle then 
-            if playerData.job.grade >= Config.journalistMinGrade then TriggerServerEvent(Config.scriptName ..':startJournalistSell')
-            else TriggerServerEvent(Config.scriptName ..':startInterimSell') end
+            if playerData.job.grade >= Config.journalistMinGrade then TriggerServerEvent('esx_journalist:startJournalistSell')
+            else TriggerServerEvent('esx_journalist:startInterimSell') end
           else ESX.ShowNotification(_U('in_vehicle')) end
         
         elseif currentAction == 'delete_vehicle' then
@@ -476,7 +476,7 @@ function openWeazelActionsMenu()
         openWeazelStorageMenu()
       elseif data.current.value == 'roof' then
         menu.close()
-        TriggerEvent(Config.scriptName ..':hasExitedMarker', lastZone)
+        TriggerEvent('esx_journalist:hasExitedMarker', lastZone)
         TeleportFadeEffect(Config.zones.copterSpawner.gps)
       
       elseif data.current.value == 'boss_actions' then
@@ -487,7 +487,7 @@ function openWeazelActionsMenu()
     end,
     function(data, menu)
       menu.close()
-      TriggerEvent(Config.scriptName ..':hasEnteredMarker', lastZone)
+      TriggerEvent('esx_journalist:hasEnteredMarker', lastZone)
     end
   )
 end
@@ -521,7 +521,7 @@ function openWeazelStorageMenu()
 end
 function openGetStocksMenu()
   printDebug('openGetStocksMenu')
-  ESX.TriggerServerCallback(Config.scriptName ..':getStockItems', function(items)
+  ESX.TriggerServerCallback('esx_journalist:getStockItems', function(items)
     local elements = {}
     for i=1, #items, 1 do
       if items[i].count ~= 0 then
@@ -550,7 +550,7 @@ function openGetStocksMenu()
             else
               menu2.close()
               menu.close()
-              TriggerServerEvent(Config.scriptName ..':getStockItem', itemName, count)
+              TriggerServerEvent('esx_journalist:getStockItem', itemName, count)
               openGetStocksMenu()
             end
           end,
@@ -568,7 +568,7 @@ function openGetStocksMenu()
 end
 function openPutStocksMenu()
   printDebug('openPutStocksMenu')
-  ESX.TriggerServerCallback(Config.scriptName ..':getPlayerInventory', function(inventory)
+  ESX.TriggerServerCallback('esx_journalist:getPlayerInventory', function(inventory)
     local elements = {}
     for i=1, #inventory.items, 1 do
       local item = inventory.items[i]
@@ -597,7 +597,7 @@ function openPutStocksMenu()
                 else
                   menu2.close()
                   menu.close()
-                  TriggerServerEvent(Config.scriptName ..':putStockItems', itemName, count)
+                  TriggerServerEvent('esx_journalist:putStockItems', itemName, count)
                   openPutStocksMenu()
                 end
               end,
@@ -608,7 +608,7 @@ function openPutStocksMenu()
           else
             printDebug('en dev')
             menu.close()
-            ESX.TriggerServerCallback(Config.scriptName ..':addArmoryWeapon', function() openPutStocksMenu() end, data.current.value, true)
+            ESX.TriggerServerCallback('esx_journalist:addArmoryWeapon', function() openPutStocksMenu() end, data.current.value, true)
           end
         end
       end,
@@ -620,7 +620,7 @@ function openPutStocksMenu()
 end
 function openGetWeaponMenu()
   printDebug('openPutWeaponMenu')
-  ESX.TriggerServerCallback(Config.scriptName ..':getArmoryWeapons', function(weapons)
+  ESX.TriggerServerCallback('esx_journalist:getArmoryWeapons', function(weapons)
     local elements = {}
     for i=1, #weapons, 1 do
       if weapons[i].count > 0 then
@@ -637,7 +637,7 @@ function openGetWeaponMenu()
     function(data, menu)
       if data.current.value ~= 'empty' then
         menu.close()
-        ESX.TriggerServerCallback(Config.scriptName ..':removeArmoryWeapon', function() openGetWeaponMenu() end, data.current.value)
+        ESX.TriggerServerCallback('esx_journalist:removeArmoryWeapon', function() openGetWeaponMenu() end, data.current.value)
       end
     end, 
     function(data, menu)
@@ -667,7 +667,7 @@ function openPutWeaponMenu()
   function(data, menu)
     if data.current.value ~= 'empty' then
       menu.close()
-      ESX.TriggerServerCallback(Config.scriptName ..':addArmoryWeapon', function() openPutWeaponMenu() end, data.current.value, true)
+      ESX.TriggerServerCallback('esx_journalist:addArmoryWeapon', function() openPutWeaponMenu() end, data.current.value, true)
     end
   end, function(data, menu)
     menu.close()
@@ -695,7 +695,7 @@ function openWeazelRoofMenu()
         ESX.ShowNotification(_U('start_job'))
       elseif data.current.value == 'rdc' then
         menu.close()
-        TriggerEvent(Config.scriptName ..':hasExitedMarker', lastZone)
+        TriggerEvent('esx_journalist:hasExitedMarker', lastZone)
         TeleportFadeEffect(Config.zones.cloakRoom.gps)
       elseif data.current.value == 'get_copt' then
         local playerPed = GetPlayerPed(-1)
@@ -709,12 +709,12 @@ function openWeazelRoofMenu()
           TriggerEvent("advancedFuel:setEssence", 100 , GetVehicleNumberPlateText(vehicle), GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
         end)
         menu.close()
-        TriggerEvent(Config.scriptName ..':hasExitedMarker', lastZone)
+        TriggerEvent('esx_journalist:hasExitedMarker', lastZone)
       end
     end,
     function(data, menu)
       menu.close()
-      TriggerEvent(Config.scriptName ..':hasEnteredMarker', lastZone)
+      TriggerEvent('esx_journalist:hasEnteredMarker', lastZone)
     end
   )
 end
@@ -750,11 +750,11 @@ function vehicleMenu()
           SetVehicleNumberPlateText(vehicle, plate)
         end)
         menu.close()
-        TriggerEvent(Config.scriptName ..':hasExitedMarker', lastZone)
+        TriggerEvent('esx_journalist:hasExitedMarker', lastZone)
     end,
     function(data, menu)
       menu.close()
-      TriggerEvent(Config.scriptName ..':hasEnteredMarker', lastZone)
+      TriggerEvent('esx_journalist:hasEnteredMarker', lastZone)
     end
 )
 end
@@ -795,12 +795,10 @@ function openWeazelTools()
       title    = _U('tools'),
       align    = 'top-left',
       elements = {
-        {label = 'Fond vert',   value = 'prop_ld_greenscreen_01'},
-        {label = 'Caméra fixe',   value = 'prop_tv_cam_02'},
-        --{label = 'Cam�ra fixe 2',   value = 'p_tv_cam_02_s'}, 
-        --{label = 'Micro 1',   value = 'v_club_roc_micstd'},
-        {label = 'Micro fixe',   value = 'v_ilev_fos_mic'},
-        {label = 'Ranger matériel',   value = 'clean'}
+        {label = _U('green_screen'), value = 'prop_ld_greenscreen_01'},
+        {label = _U('static_cam')  , value = 'prop_tv_cam_02'},
+        {label = _U('static_mic')      , value = 'v_ilev_fos_mic'},
+        {label = _U('clean_static'), value = 'clean'}
       },
     },
     function(data, menu)
@@ -848,9 +846,9 @@ function openWeazelMobileTools()
       title    = _U('mobile_tools'),
       align    = 'top-left',
       elements = {
-        {label = 'Caméra épaule',   value = 'cam'},
-        {label = 'micro gauche',   value = 'mic'},
-        {label = 'micro perche',   value = 'bmic'},
+        {label = _U('mobile_cam') , value = 'cam' },
+        {label = _U('mobile_mic') , value = 'mic' },
+        {label = _U('mobile_bmic'), value = 'bmic'},
       },
     },
     function(data, menu)
@@ -939,8 +937,8 @@ function genRunList()
   currentRun = coordsList
   printDebug('genRunList: ' .. #currentRun)
 end
-RegisterNetEvent(Config.scriptName ..':nextBoxes')
-AddEventHandler(Config.scriptName ..':nextBoxes', function()
+RegisterNetEvent('esx_journalist:nextBoxes')
+AddEventHandler('esx_journalist:nextBoxes', function()
   local tmpList = {}
   for i=1, #currentRun, 1 do
     if i ~= 1 then table.insert(tmpList, currentRun[i]) end

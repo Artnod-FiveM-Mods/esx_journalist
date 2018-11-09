@@ -14,14 +14,7 @@ Locales['fr'] = {
   ['harvest_action']        = 'Appuyez sur ~INPUT_CONTEXT~ pour prendre des journaux',
   ['interim_sell']          = 'Appuyez sur ~INPUT_CONTEXT~ pour déposer un journal',
   ['journalist_sell']       = 'Appuyez sur ~INPUT_CONTEXT~ pour déposer des journaux',
-  -- billing menu
-  ['mobile_title']         = 'Weazel News - Mobile',
-  ['billing']              = 'Emettre une facture',
-  ['tools']                = 'Matériels fixe',
-  ['mobile_tools']         = 'Matériels mobile',
-  ['bill_amount']          = 'Montant de la facture',
-  ['invalid_amount']       = 'Montant invalide',
-  ['no_player_nearby']     = 'Aucune personne à proximité',  
+  
   -- weazel menu
   ['take_service']         = 'Prendre son service',
   ['end_service']          = 'Terminer son service',
@@ -41,11 +34,33 @@ Locales['fr'] = {
   ['invalid_quantity']     = 'Quantité invalide',
   ['you_removed']          = 'vous avez retiré x',
   ['you_added']            = 'Vous avez ajouté x',
+  
+  -- mobile menu
+  ['mobile_title']         = 'Weazel News - Mobile',
+  ['billing']              = 'Emettre une facture',
+  ['tools']                = 'Matériels fixe',
+  ['mobile_tools']         = 'Matériels mobile',
+  -- billing menu
+  ['bill_amount']          = 'Montant de la facture',
+  ['invalid_amount']       = 'Montant invalide',
+  ['no_player_nearby']     = 'Aucune personne à proximité', 
+  -- static tools menu
+  ['green_screen']         = 'Fond vert',
+  ['static_cam']           = 'Caméra fixe',
+  ['static_mic']           = 'Micro fixe',
+  ['clean_static']         = 'Ranger matériel',
+  -- mobile tools menu
+  ['mobile_cam']           = 'Caméra épaule',
+  ['mobile_mic']           = 'micro main gauche',
+  ['mobile_bmic']          = 'micro perche',
+  
   -- roof menu
   ['roof_menu_title']      = 'Weazel : Toit',
   ['rdc']                  = 'Prendre l\'ascenseur',
+  
   -- vehicle menu
   ['vehicle_menu_title']   = 'Véhicule de service',
+  
   --notif general
   ['take_service_notif']   = 'Prise de ~g~Service~s~',
   ['end_service_notif']    = 'Fin de ~r~Service~s~',
