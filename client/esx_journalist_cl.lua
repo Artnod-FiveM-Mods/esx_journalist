@@ -800,7 +800,7 @@ function openWeazelTools()
         --{label = 'Caméra fixe 2',   value = 'p_tv_cam_02_s'}, 
         --{label = 'Micro 1',   value = 'v_club_roc_micstd'},
         {label = 'Micro fixe',   value = 'v_ilev_fos_mic'},
-        {label = 'Ranger matériel',   value = 'clean'}
+        {label = 'Ranger matÃ©riel',   value = 'clean'}
       },
     },
     function(data, menu)
