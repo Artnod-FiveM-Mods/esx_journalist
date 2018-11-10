@@ -268,7 +268,7 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(0)
-    if playerData.job.grade >= Config.journalistMinGrade and IsControlJustReleased(1, Keys["F6"]) then openMobileweazelMenu() end
+    if playerData.job.name >= Config.jobName and playerData.job.grade >= Config.journalistMinGrade and IsControlJustReleased(1, Keys["F6"]) then openMobileweazelMenu() end
     if currentAction ~= nil then
       SetTextComponentFormat('STRING')
       AddTextComponentString(currentActionMsg)
