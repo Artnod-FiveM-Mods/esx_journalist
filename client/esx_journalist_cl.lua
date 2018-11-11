@@ -16,6 +16,7 @@ local currentActionData = {}
 
 local isWorking         = false
 local isRunning         = false
+local lastGrade         = nil
 local currentRun        = {}
 
 -- teleport
@@ -62,19 +63,6 @@ Citizen.CreateThread(function()
     -- draw blip for everyone
     if k == 'cloakRoom' then zone.blip = drawBlip(zone.gps, zone.blipD)
     else zone.blip = nil end
-    -- enable zone for worker
-    if playerData.job.name == Config.jobName then
-      if k == 'cloakRoom' or
-        k == 'vehicleSpawner' or
-        k == 'vehicleSpawnPoint'
-      then
-        zone.enable = true
-      elseif k == 'copterSpawner' then
-        if playerData.job.grade >= Config.journalistMinGrade then zone.enable = true end
-      elseif k == 'copterSpawnPoint' then
-        if playerData.job.grade >= Config.copterMinGrade then zone.enable = true end
-      end
-    end
     table.insert(zoneList, zone)
   end
   -- init end
@@ -104,16 +92,33 @@ Citizen.CreateThread(function()
       coords     = GetEntityCoords(playerPed)
       inVehicle  = IsPedInAnyVehicle(playerPed, 0)
       -- refresh zone
-      for k,v in pairs(Config.zones) do
-        if v.enable == false then
-          if k == 'cloakRoom' or k == 'vehicleSpawner' or k == 'vehicleSpawnPoint' then 
-            v.enable = true
-          elseif k == 'copterSpawner' then
-            if playerData.job.grade >= Config.journalistMinGrade then v.enable = true end
-          elseif k == 'copterSpawnPoint' then
-            if playerData.job.grade >= Config.copterMinGrade then v.enable = true end
-          end
+      for i=1, #zoneList, 1 do
+        if zoneList[i].name == 'cloakRoom' then -- force enable for cloakRoom 
+          zoneList[i].enable = true 
+        elseif zoneList[i].name == 'vehicleSpawner' then -- force enable forvehicleSpawner
+          zoneList[i].enable = true
+        elseif zoneList[i].name == 'vehicleSpawnPoint' then -- force enable for vehicleSpawnPoint
+          zoneList[i].enable = true
+        elseif zoneList[i].name == 'copterSpawner' then -- refresh roof access
+          if playerData.job.grade >= Config.journalistMinGrade then 
+            zoneList[i].enable = true 
+          else zoneList[i].enable = false end
+        elseif zoneList[i].name == 'copterSpawnPoint' then -- refresh copter access
+          if playerData.job.grade >= Config.copterMinGrade then zoneList[i].enable = true 
+          else zoneList[i].enable = false end
+        elseif zoneList[i].name == 'printer' then -- disable printer on grade change
+          if lastGrade ~= playerData.job.grade then zoneList[i].enable = false end
+        elseif zoneList[i].name == 'interimBoxes' then -- disable boxes on grade change
+          if lastGrade ~= playerData.job.grade then zoneList[i].enable = false end
+        elseif zoneList[i].name == 'journalistBoxes' then -- disable boxes on grade change
+          if lastGrade ~= playerData.job.grade then zoneList[i].enable = false end
         end
+      end
+      -- reset run on grade change
+      if lastGrade ~= playerData.job.grade then
+        lastGrade = playerData.job.grade
+        isRunning = false
+        currentRun = {}
       end
     -- other people
     else
@@ -121,10 +126,11 @@ Citizen.CreateThread(function()
       if isWorking then 
         isWorking = false
         isRunning = false
+        currentRun = {}
       end
       -- refresh zone
-      for k,v in pairs(Config.zones) do
-        if v.enable then v.enable = false end
+      for i=1, #zoneList, 1 do
+        if zoneList[i].enable then zoneList[i].enable = false end
       end
     end
   end
@@ -158,6 +164,7 @@ Citizen.CreateThread(function()
           zoneList[i].blip = drawBlip(zoneList[i].gps, zoneList[i].blipD)
         elseif not zoneList[i].enable and DoesBlipExist(zoneList[i].blip) then 
           RemoveBlip(zoneList[i].blip)
+          printDebug('RemoveBlip')
           zoneList[i].blip = nil
         end
       end
@@ -166,6 +173,7 @@ Citizen.CreateThread(function()
       for i=1, #zoneList, 1 do
         if zoneList[i].name ~= 'cloakRoom' and DoesBlipExist(zoneList[i].blip) then
           RemoveBlip(zoneList[i].blip)
+          printDebug('RemoveBlip')
           zoneList[i].blip = nil
         end
       end
