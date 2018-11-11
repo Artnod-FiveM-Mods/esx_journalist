@@ -1,6 +1,6 @@
 Config            = {}
 Config.Locale     = 'fr'
-Config.debug      = true
+Config.debug      = false
 Config.scriptName = "esx_journalist"
 
 Config.jobName          = "journalist"

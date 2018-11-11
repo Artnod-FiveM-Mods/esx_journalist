@@ -1,6 +1,6 @@
 description 'ESX journalist'
 
-version '0.2'
+version '0.3'
 
 dependencies {
   "mysql-async",

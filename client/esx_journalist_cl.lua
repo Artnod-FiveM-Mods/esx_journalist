@@ -96,29 +96,37 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(10)
-    -- refresh playerData ...
+    -- refresh player data
     playerData = ESX.GetPlayerData()
-    local playerPed = GetPlayerPed(-1)
-    coords     = GetEntityCoords(playerPed)
-    inVehicle  = IsPedInAnyVehicle(playerPed, 0)
-    -- quit job
-    if isWorking and playerData.job.name ~= Config.jobName then 
-      isWorking = false
-      isRunning = false
-    end
-    -- refresh zone
-    for k,v in pairs(Config.zones) do
-      if playerData.job.name == Config.jobName and v.enable == false then
-        if k == 'cloakRoom' or k == 'vehicleSpawner' or k == 'vehicleSpawnPoint' then 
-          v.enable = true
-        elseif k == 'copterSpawner' then
-          if playerData.job.grade >= Config.journalistMinGrade then v.enable = true end
-        elseif k == 'copterSpawnPoint' then
-          if playerData.job.grade >= Config.copterMinGrade then v.enable = true end
+    -- weazel employees
+    if playerData.job.name == Config.jobName then
+      local playerPed = GetPlayerPed(-1)
+      coords     = GetEntityCoords(playerPed)
+      inVehicle  = IsPedInAnyVehicle(playerPed, 0)
+      -- refresh zone
+      for k,v in pairs(Config.zones) do
+        if v.enable == false then
+          if k == 'cloakRoom' or k == 'vehicleSpawner' or k == 'vehicleSpawnPoint' then 
+            v.enable = true
+          elseif k == 'copterSpawner' then
+            if playerData.job.grade >= Config.journalistMinGrade then v.enable = true end
+          elseif k == 'copterSpawnPoint' then
+            if playerData.job.grade >= Config.copterMinGrade then v.enable = true end
+          end
         end
-      elseif playerData.job.name ~= Config.jobName and v.enable then v.enable = false end
+      end
+    -- other people
+    else
+      -- quit job
+      if isWorking then 
+        isWorking = false
+        isRunning = false
+      end
+      -- refresh zone
+      for k,v in pairs(Config.zones) do
+        if v.enable then v.enable = false end
+      end
     end
-    -- others
   end
 end)
 
@@ -143,15 +151,23 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(1000)
-    for i=1, #zoneList, 1 do
-      if playerData.job.name == Config.jobName then
-        if zoneList[i].enable and not DoesBlipExist(zoneList[i].blip) then zoneList[i].blip = drawBlip(zoneList[i].gps, zoneList[i].blipD)
-        elseif not zoneList[i].enable and DoesBlipExist(zoneList[i].blip) then RemoveBlip(zoneList[i].blip) end
-      elseif zoneList[i].name ~= 'cloakRoom' and DoesBlipExist(zoneList[i].blip) then 
-        zoneList[i].enable = false
-        RemoveBlip(zoneList[i].blip)
-        zoneList[i].blip = nil
-        printDebug('remove Blip')
+    -- weazel employees
+    if playerData.job.name == Config.jobName then
+      for i=1, #zoneList, 1 do
+        if zoneList[i].enable and not DoesBlipExist(zoneList[i].blip) then 
+          zoneList[i].blip = drawBlip(zoneList[i].gps, zoneList[i].blipD)
+        elseif not zoneList[i].enable and DoesBlipExist(zoneList[i].blip) then 
+          RemoveBlip(zoneList[i].blip)
+          zoneList[i].blip = nil
+        end
+      end
+    -- other people
+    else
+      for i=1, #zoneList, 1 do
+        if zoneList[i].name ~= 'cloakRoom' and DoesBlipExist(zoneList[i].blip) then
+          RemoveBlip(zoneList[i].blip)
+          zoneList[i].blip = nil
+        end
       end
     end
   end
@@ -174,9 +190,11 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(0)
-    for i=1, #zoneList, 1 do
-      if zoneList[i].enable and GetDistanceBetweenCoords(coords, zoneList[i].gps.x, zoneList[i].gps.y, zoneList[i].gps.z, true) < zoneList[i].markerD.drawDistance then
-        showMarker(zoneList[i])
+    if playerData.job.name == Config.jobName then
+      for i=1, #zoneList, 1 do
+        if zoneList[i].enable and GetDistanceBetweenCoords(coords, zoneList[i].gps.x, zoneList[i].gps.y, zoneList[i].gps.z, true) < zoneList[i].markerD.drawDistance then
+          showMarker(zoneList[i])
+        end
       end
     end
   end
@@ -248,6 +266,7 @@ Citizen.CreateThread(function()
         if zoneList[i].enable and GetDistanceBetweenCoords(coords, zoneList[i].gps.x, zoneList[i].gps.y, zoneList[i].gps.z, true) < zoneList[i].markerD.size.x * 0.75 then
           isInMarker    = true
           currentZone   = zoneList[i]
+          break
         end
       end
       if isInMarker and not alreadyInZone then
@@ -268,51 +287,55 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(0)
-    if playerData.job.name == Config.jobName and playerData.job.grade >= Config.journalistMinGrade and IsControlJustReleased(1, Keys["F6"]) then openMobileweazelMenu() end
-    if currentAction ~= nil then
-      SetTextComponentFormat('STRING')
-      AddTextComponentString(currentActionMsg)
-      DisplayHelpTextFromStringLabel(0, 0, 1, - 1)
-      if IsControlJustReleased(1, Keys["E"]) then
-      
-        if currentAction     == 'weazelMenu' then
-          if not inVehicle then openWeazelActionsMenu() 
-          else ESX.ShowNotification(_U('in_vehicle')) end
-          
-        elseif currentAction     == 'copterspawn_menu' then
-          if not inVehicle then openWeazelRoofMenu()
-          else ESX.ShowNotification(_U('in_vehicle')) end
-          
-        elseif currentAction == 'vehiclespawn_menu' then
-          if not inVehicle then vehicleMenu() 
-          else ESX.ShowNotification(_U('in_vehicle')) end
-          
-        elseif currentAction == 'harvestRun' then
-          if not inVehicle then
-            if playerData.job.grade >= Config.journalistMinGrade then TriggerServerEvent('esx_journalist:startJournalistHarvest')
-            else TriggerServerEvent('esx_journalist:startInterimHarvest') end
-          else ESX.ShowNotification(_U('in_vehicle')) end
-          
-        elseif currentAction == 'sellRun' then
-          if not inVehicle then 
-            if playerData.job.grade >= Config.journalistMinGrade then TriggerServerEvent('esx_journalist:startJournalistSell')
-            else TriggerServerEvent('esx_journalist:startInterimSell') end
-          else ESX.ShowNotification(_U('in_vehicle')) end
+    
+    if playerData.job.name == Config.jobName then
+      if playerData.job.grade >= Config.journalistMinGrade and IsControlJustReleased(1, Keys["F6"]) then openMobileweazelMenu() end
+      if currentAction ~= nil then
+        SetTextComponentFormat('STRING')
+        AddTextComponentString(currentActionMsg)
+        DisplayHelpTextFromStringLabel(0, 0, 1, - 1)
+        if IsControlJustReleased(1, Keys["E"]) then
         
-        elseif currentAction == 'delete_vehicle' then
-          if inVehicle then
-            local vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
-            local plate = string.gsub(GetVehicleNumberPlateText(vehicle), " ", "")
-            if string.find (plate, Config.platePrefix) then
-              if GetVehicleEngineHealth(vehicle) <= 500 or GetVehicleBodyHealth(vehicle) <= 500 then ESX.ShowNotification(_U('vehicle_broken'))
-              else DeleteVehicle(vehicle) end
-            else ESX.ShowNotification(_U('bad_vehicle')) end
+          if currentAction     == 'weazelMenu' then
+            if not inVehicle then openWeazelActionsMenu() 
+            else ESX.ShowNotification(_U('in_vehicle')) end
+            
+          elseif currentAction     == 'copterspawn_menu' then
+            if not inVehicle then openWeazelRoofMenu()
+            else ESX.ShowNotification(_U('in_vehicle')) end
+            
+          elseif currentAction == 'vehiclespawn_menu' then
+            if not inVehicle then vehicleMenu() 
+            else ESX.ShowNotification(_U('in_vehicle')) end
+            
+          elseif currentAction == 'harvestRun' then
+            if not inVehicle then
+              if playerData.job.grade >= Config.journalistMinGrade then TriggerServerEvent('esx_journalist:startJournalistHarvest')
+              else TriggerServerEvent('esx_journalist:startInterimHarvest') end
+            else ESX.ShowNotification(_U('in_vehicle')) end
+            
+          elseif currentAction == 'sellRun' then
+            if not inVehicle then 
+              if playerData.job.grade >= Config.journalistMinGrade then TriggerServerEvent('esx_journalist:startJournalistSell')
+              else TriggerServerEvent('esx_journalist:startInterimSell') end
+            else ESX.ShowNotification(_U('in_vehicle')) end
+          
+          elseif currentAction == 'delete_vehicle' then
+            if inVehicle then
+              local vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
+              local plate = string.gsub(GetVehicleNumberPlateText(vehicle), " ", "")
+              if string.find (plate, Config.platePrefix) then
+                if GetVehicleEngineHealth(vehicle) <= 500 or GetVehicleBodyHealth(vehicle) <= 500 then ESX.ShowNotification(_U('vehicle_broken'))
+                else DeleteVehicle(vehicle) end
+              else ESX.ShowNotification(_U('bad_vehicle')) end
+            end
           end
+          
+          currentAction = nil
         end
-        
-        currentAction = nil
       end
     end
+    
   end
 end)
 
@@ -987,22 +1010,16 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
     Citizen.Wait(0)
-    if IsControlJustReleased(1, Keys["DELETE"]) and isWorking then
-      if #currentRun == 0 then genRunList() end      
-      if isRunning then
-        stopNativeJob()
-        isRunning = false
-      else
-        local playerPed = GetPlayerPed(-1)
-        if inVehicle then
-          if playerData.job.grade < Config.journalistMinGrade and IsVehicleModel(GetVehiclePedIsIn(playerPed, false), GetHashKey(Config.vehicles.bike.hash)) then
-            startNativeRun()
-            isRunning = true
-          elseif playerData.job.grade >= Config.journalistMinGrade and IsVehicleModel(GetVehiclePedIsIn(playerPed, false), Config.vehicles.van.hash) then
-            startNativeRun()
-            isRunning = true
-          end
-        else ESX.ShowNotification(_U('not_good_veh')) end
+    if playerData.job.name == Config.jobName then
+      if IsControlJustReleased(1, Keys["DELETE"]) and isWorking then
+        if #currentRun == 0 then genRunList() end      
+        if isRunning then
+          stopNativeJob()
+          isRunning = false
+        else
+          startNativeRun()
+          isRunning = true
+        end
       end
     end
   end
@@ -1013,6 +1030,9 @@ Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while Config.debug do
     Citizen.Wait(5000)
-    printDebug('gps = {x='.. coords.x ..', y='.. coords.y ..', z='.. coords.z - 1 ..'}')
+    if playerData.job.name == Config.jobName then
+      printDebug(json.encode({{grade = playerData.job.grade}, {inVehicle = inVehicle}, {isWorking = isWorking}, {isRunning = isRunning}}))
+      printDebug('gps = {x='.. coords.x ..', y='.. coords.y ..', z='.. coords.z - 1 ..'}')
+    end
   end
 end)
