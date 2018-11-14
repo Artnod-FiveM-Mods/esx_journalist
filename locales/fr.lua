@@ -2,14 +2,15 @@ Locales['fr'] = {
   -- zones blip
   ['cloakroom_blip']      = 'Weazel News',
   ['vehicleSpawner_blip'] = 'Weazel : Sortie Véhicule',
-  ['vehicleDeleter_blip'] = 'Weazel : Retour Véhicule',
+  ['vehicleDeleter_blip'] = 'Weazel : Garage',
   ['copterSpawner_blip']  = 'Weazel : Toit',
   ['copterDeleter_blip']  = 'Weazel : Héliport',
   ['printer_blip']        = 'Weazel : Imprimerie',
   -- zones action 
   ['cloakroom_action']      = 'Appuyez sur ~INPUT_CONTEXT~ pour accéder au vestiaire',
   ['vehicleSpawner_action'] = 'Appuyez sur ~INPUT_CONTEXT~ pour accéder au garage',
-  ['roof_action']           = 'Appuyez sur ~INPUT_CONTEXT~ pour accéder au toit',
+  ['roof_action']           = 'Appuyez sur ~INPUT_CONTEXT~ pour descendre',
+  ['copter_action']         = 'Appuyez sur ~INPUT_CONTEXT~ pour sortir un hélicopter',
   ['vehicleDeleter_action'] = 'Appuyez sur ~INPUT_CONTEXT~ pour ranger le véhicule',
   ['harvest_action']        = 'Appuyez sur ~INPUT_CONTEXT~ pour prendre des journaux',
   ['interim_sell']          = 'Appuyez sur ~INPUT_CONTEXT~ pour déposer un journal',

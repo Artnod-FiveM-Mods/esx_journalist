@@ -1,4 +1,5 @@
 ESX = nil
+local debug = Config.debug
 
 local playersInterimHarvest = {}
 local playersInterimHarvestExit = {}
@@ -14,17 +15,17 @@ local playersJournalistSellExit = {}
 
 -- debug msg
 function printDebug(msg)
-  if Config.debug then print('['.. Config.scriptName ..']\t'.. msg) end
+  if Config.debug then print('[esx_journalist]\t'.. msg) end
 end
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-TriggerEvent('esx_phone:registerNumber', Config.jobName, 'Client '..Config.companyName, false, false)
-TriggerEvent('esx_society:registerSociety', Config.jobName, Config.companyName, Config.companyLabel, Config.companyLabel, Config.companyLabel, {type = 'private'})
+TriggerEvent('esx_phone:registerNumber', 'journalist', 'Client Weazel News', false, false)
+TriggerEvent('esx_society:registerSociety', 'journalist', 'Weazel News', 'society_weazel', 'society_weazel', 'society_weazel', {type = 'private'})
 
 -- get Storage
 ESX.RegisterServerCallback('esx_journalist:getStockItems', function(source, cb)
   printDebug('getStockItems')
-  TriggerEvent('esx_addoninventory:getSharedInventory', Config.companyLabel, function(inventory)
+  TriggerEvent('esx_addoninventory:getSharedInventory', 'society_weazel', function(inventory)
     cb(inventory.items)
   end)
 end)
@@ -32,7 +33,7 @@ RegisterServerEvent('esx_journalist:getStockItem')
 AddEventHandler('esx_journalist:getStockItem', function(itemName, count)
   printDebug('getStockItem')
   local xPlayer = ESX.GetPlayerFromId(source)
-  TriggerEvent('esx_addoninventory:getSharedInventory', Config.companyLabel, function(inventory)
+  TriggerEvent('esx_addoninventory:getSharedInventory', 'society_weazel', function(inventory)
     local item = inventory.getItem(itemName)
     if item.count >= count then
       inventory.removeItem(itemName, count)
@@ -56,7 +57,7 @@ RegisterServerEvent('esx_journalist:putStockItems')
 AddEventHandler('esx_journalist:putStockItems', function(itemName, count)
   printDebug('putStockItems')
   local xPlayer = ESX.GetPlayerFromId(source)
-  TriggerEvent('esx_addoninventory:getSharedInventory', Config.companyLabel, function(inventory)
+  TriggerEvent('esx_addoninventory:getSharedInventory', 'society_weazel', function(inventory)
     local item = inventory.getItem(itemName)
     local playerItemCount = xPlayer.getInventoryItem(itemName).count
     if item.count >= 0 and count <= playerItemCount then
@@ -129,13 +130,18 @@ function interimSell(source)
         playersInterimSell[source] = false
       else
         xPlayer.removeInventoryItem(Config.iItemDb_name, Config.iItemRemove)
-        xPlayer.addMoney(Config.iItemPrice)
-        local companyPrice = math.floor(Config.iItemPrice * Config.iCompanyRate)
+        local employeePrice = Config.iItemPrice
+        local companyPrice = math.floor(employeePrice * Config.iCompanyRate)
+        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_weazel', function(compAccount)
+          compAccount.addMoney(companyPrice)
+          xPlayer.addMoney(employeePrice)
+          TriggerClientEvent('esx:showNotification', source, _U('you_earned', employeePrice))
+          TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', companyPrice))
+        end)
         local gouvTaxe = math.floor(companyPrice * Config.gouvRate)
-        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyLabel, function(account) account.addMoney(companyPrice) end)
-        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyTaxeLabel, function(account) account.addMoney(gouvTaxe) end)
-        TriggerClientEvent('esx:showNotification', source, _U('you_earned', Config.iItemPrice))
-        TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', companyPrice))
+        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_taxe_weazel', function(taxeAccount)
+          taxeAccount.addMoney(gouvTaxe)
+        end)
         TriggerClientEvent('esx_journalist:nextBoxes', source)
       end
       playersInterimSell[source] = false
@@ -210,6 +216,7 @@ AddEventHandler('esx_journalist:stopJournalistHarvest', function()
   local _source = source
   if playersJournalistHarvest[_source] then playersJournalistHarvestExit[_source] = true end
 end)
+
 -- journalist sell
 function journalistSell(source)
   printDebug('journalistSell')
@@ -223,19 +230,25 @@ function journalistSell(source)
         playersJournalistSell[source] = false
       else
         xPlayer.removeInventoryItem(Config.jItemDb_name, Config.jItemRemove)
-        xPlayer.addMoney(Config.jItemPrice)
-        local companyPrice = math.floor(Config.jItemPrice * Config.jCompanyRate)
+        local employeePrice = Config.jItemPrice
+        local companyPrice = math.floor(employeePrice * Config.jCompanyRate)
         local gouvTaxe = math.floor(companyPrice * Config.gouvRate)
-        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyLabel, function(account)account.addMoney(companyPrice)end )
-        TriggerEvent('esx_addonaccount:getSharedAccount', Config.companyTaxeLabel, function(account) account.addMoney(gouvTaxe) end)
-        TriggerClientEvent('esx:showNotification', source, _U('you_earned', Config.jItemPrice))
-        TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', math.floor(companyPrice)))
+        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_weazel', function(compAccount)
+          compAccount.addMoney(companyPrice)
+          xPlayer.addMoney(employeePrice)
+          TriggerClientEvent('esx:showNotification', source, _U('you_earned', employeePrice))
+          TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', companyPrice))
+        end)
+        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_taxe_weazel', function(taxeAccount)
+          taxeAccount.addMoney(gouvTaxe)
+        end)
         TriggerClientEvent('esx_journalist:nextBoxes', source)
       end
       playersJournalistSell[source] = false
     else TriggerClientEvent('esx:showNotification', source, _U('sell_fail')) end
   end)
 end
+
 RegisterServerEvent('esx_journalist:startJournalistSell')
 AddEventHandler('esx_journalist:startJournalistSell', function()
   printDebug('startJournalistSell')

@@ -1,12 +1,7 @@
 Config            = {}
 Config.Locale     = 'fr'
-Config.debug      = false
-Config.scriptName = "esx_journalist"
+Config.debug      = true
 
-Config.jobName          = "journalist"
-Config.companyLabel     = "society_weazel"
-Config.companyTaxeLabel = "society_taxe_weazel"
-Config.companyName      = "Weazel News"
 Config.platePrefix      = "WEAZEL"
 
 Config.journalistMinGrade = 1
@@ -56,26 +51,20 @@ Config.vehicles = {
 -- zones
 Config.zones = {
   cloakRoom = {
-    enable  = true,
+    enable  = false,
     gps     = {x=-598.67492675781, y=-929.96899414063, z=22.88},
     markerD = {type=27, drawDistance=50.0, size={x=2.0, y=2.0, z=1.0}, color={r=11, g=203, b=159} },
     blipD   = {sprite=184, display=4, scale=0.9, color=1, range=true, name=_U('cloakroom_blip') }
   },
   
-  vehicleSpawner = {
-    enable = true,
-    gps    = {x=-537.03985595703, y=-886.71276855469, z=24.20},
-    markerD = {type=27, drawDistance=50.0, size={x=2.0, y=2.0, z=1.0}, color={r=11, g=203, b=159} },
-    blipD   = {sprite=184, display=4, scale=0.9, color=1, range=true, name=_U('vehicleSpawner_blip') }
-  },
   vehicleSpawnPoint = {
     enable = false,
     gps    = {x=-532.78131103516, y=-889.32562255859, z=23.90},
-    markerD = {type=27, drawDistance=100.0, size={x=3.0, y=3.0, z=1.0}, color={r=255, g=0, b=0}, heading=182},
+    markerD = {type=27, drawDistance=100.0, size={x=4.0, y=4.0, z=1.0}, color={r=255, g=0, b=0}, heading=182},
     blipD   = {sprite=184, display=4, scale=0.9, color=1, range=true, name=_U('vehicleDeleter_blip') }
   },
   
-  copterSpawner = {
+  roof = {
     enable = false,
     gps    = {x=-568.97296142578, y=-927.68316650391, z=35.85},
     markerD = {type=27, drawDistance=50.0, size={x=2.0, y=2.0, z=1.0}, color={r=11, g=203, b=159} },
@@ -91,7 +80,7 @@ Config.zones = {
   printer = {
     enable = false,
     gps    = {x=-589.83483886719, y=-910.82006835938, z=22.89},
-    markerD = {type=27, drawDistance=50.0, size={x=2.0, y=2.0, z=1.0}, color={r=11, g=203, b=159} },
+    markerD = {type=27, drawDistance=50.0, size={x=3.0, y=3.0, z=1.0}, color={r=11, g=203, b=159} },
     blipD   = {sprite=184, display=4, scale=0.9, color=1, range=true, name=_U('printer_blip') }
   },
   interimBoxes = {
@@ -149,36 +138,17 @@ Config.interimBoxes = {
     {x=-1076.00, y=-790.46 , z=18.32}, -- little seoul
     {x=-852.20 , y=-678.95 , z=26.85}, -- little seoul
     {x=-752.88 , y=-679.11 , z=29.31}  -- little seoul
-  
-    -- {x=-1174.21, y=-1469.64, z=3.38 }, -- vespucci
-    -- {x=-1214.37, y=-1128.68, z=6.82 }, -- vespucci
-    -- {x=-1095.40, y=-1287.56, z=4.49 }, -- palomino avenue
-    -- {x=-740.40 , y=-1113.14, z=9.91 }, -- palomino avenue
-    -- {x=-562.40 , y=-965.76 , z=22.45}, -- little seoul
-    -- {x=-521.34 , y=-729.34 , z=31.86}, -- little seoul
-    -- {x=-487.17 , y=-815.22 , z=29.45}, -- little seoul
-    -- {x=-526.87 , y=-671.38 , z=32.24}, -- little seoul
-    -- {x=-718.16 , y=-670.14 , z=29.35}, -- little seoul
-    -- {x=-727.56 , y=-644.52 , z=29.31}, -- little seoul
-    -- {x=-1441.19, y=-720.86 , z=22.80}, -- freeway
-    -- {x=-1166.75, y=-686.61 , z=21.19}, -- freeway
   },
   {
     {x=-1441.16, y=-720.89, z=22.80},
     {x=-1282.98, y=-644.04, z=25.68},
-  
     {x=-1432.65, y=-603.80, z=29.73},
     {x=-1355.74, y=-560.02, z=29.19},
     {x=-1260.62, y=-484.06, z=32.37},
     {x=-1057.77, y=-359.31, z=36.76},
-    -- {x=-1324.48, y=-505.92, z=32.21},
-    -- {x=-1259.41, y=-529.64, z=30.17},
-    -- {x=-1050.81, y=-395.93, z=36.66},
-    
     {x=-1067.42, y=-431.96, z=35.64},
     {x=-921.11 , y=-420.37, z=36.46},
     {x=-741.66 , y=-356.83, z=34.39},
-    
     {x=-874.61, y=-175.22, z=36.91 },
     {x=-1029.11, y=-214.78, z=36.92},
     {x=-1246.05, y=-299.82, z=36.38},
@@ -186,61 +156,29 @@ Config.interimBoxes = {
     {x=-1452.97, y=-417.49, z=34.67},
     {x=-1559.02, y=-483.69, z=34.48},
     {x=-1675.20, y=-584.29, z=32.68},
-    -- {x=-1245.02, y=-334.16, z=36.15},
-    -- {x=-1190.45, y=-266.73, z=36.73},
-    -- {x=-1207.52, y=-314.56, z=36.81},
-    -- {x=-1480.37, y=-483.74, z=34.67},
-    -- {x=-1618.43, y=-527.13, z=33.64},
-    -- {x=-1441.09, y=-493.06, z=32.85},
-  
     {x=-1420.45, y=-298.91, z=43.13},
     {x=-1390.09, y=-230.20, z=43.11},
     {x=-1429.79, y=-95.26 , z=50.75},
     {x=-1501.37, y=-150.56, z=51.54}
   },
   { -- vinewood
-    -- {x=-568.09, y=271.17 , z=82.01 },
-  
     {x=327.33 , y=167.54 , z=102.57}, -- vinewood
     {x=541.27 , y=89.32  , z=95.29 }, -- vinewood
-    -- {x=529.50 , y=100.69 , z=95.32 }, -- vinewood
-    -- {x=536.02 , y=36.72  , z=93.59 }, -- vinewood
-   
     {x=522.53 , y=-158.56, z=55.59 }, -- hawick
-    -- {x=483.64 , y=-140.12, z=57.90 }, -- hawick
     {x=380.59 , y=-94.03 , z=65.93 }, -- hawick
-     -- {x=302.30 , y=-76.68 , z=69.20 }, -- hawick
     {x=241.49 , y=-58.38 , z=68.62 }, -- hawick
-    -- {x=169.11 , y=-29.13 , z=67.00 }, -- hawick
-    -- {x=194.39 , y=-36.23 , z=67.52 }, -- hawick
     {x=106.80 , y=-9.54  , z=66.92 }, -- hawick
-   
-    -- {x=-448.44, y=22.64  , z=44.79 }, -- burton
     {x=-432.02, y=16.77  , z=45.14 }, -- burton
-    -- {x=-357.49, y=-27.93 , z=41.21 }, -- burton
     {x=-278.87, y=-22.39 , z=48.35 }, -- burton
-    -- {x=-185.58, y=-54.93 , z=50.75 }, -- burton
     {x=-54.44 , y=-97.60 , z=56.81 }, -- burton
     {x=122.50 , y=-165.11, z=53.68 }, -- burton
-    -- {x=218.79 , y=-200.26, z=53.01 }, -- burton
     {x=260.14 , y=-215.59, z=52.97 }, -- burton
-    -- {x=301.19 , y=-230.50, z=52.99 }, -- burton
-  
     {x=209.49 , y=-334.09, z=43.02 }, -- alta
-    -- {x=240.69 , y=-274.43, z=43.42 }, -- alta
     {x=53.70  , y=-277.49, z=46.61 }, -- alta
-  
-    -- {x=-179.85, y=-366.61, z=31.70 },
     {x=-148.19, y=-399.59, z=32.70 },
     {x=-251.90, y=-344.14, z=28.96 },
     {x=-390.13, y=-236.20, z=35.02 },
-     
   },
-  -- {
-    -- {x=1177.40, y=-424.63, z=66.19},
-    -- {x=1199.83, y=-472.53, z=65.16},
-    -- {x=1217.79, y=-395.53, z=67.31}
-  -- },
 }
 
 Config.journalistBoxes = {
