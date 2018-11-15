@@ -7,12 +7,11 @@ Weazel News Company
 
 # Requirements
 
-  - mysql-async,
-  - esx_datastore,
   - esx_society,
   - esx_billing,
+  - esx_datastore,
   - esx_phone,
-  - Weazel-News-Cam
+  - WeazelNewsCam
 
 # Getting Started
 

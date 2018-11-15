@@ -1,8 +1,8 @@
-Config            = {}
-Config.Locale     = 'fr'
-Config.debug      = true
+Config        = {}
+Config.Locale = 'fr'
+Config.debug  = true
 
-Config.platePrefix      = "WEAZEL"
+Config.platePrefix = "WEAZEL"
 
 Config.journalistMinGrade = 1
 Config.storageMinGrade    = 2
@@ -18,7 +18,7 @@ Config.iItemName     = "Journal"
 Config.iItemAdd      = 1
 Config.iItemRemove   = 1
 Config.iItemPrice    = 70
-Config.iCompanyRate  = 0.08
+Config.iCompanyRate  = 0.1
 
 
 Config.jItemTime     = 2500
@@ -26,8 +26,8 @@ Config.jItemDb_name  = "journaux"
 Config.jItemName     = "Paquet de journaux"
 Config.jItemAdd      = 1
 Config.jItemRemove   = 1
-Config.jItemPrice    = 10
-Config.jCompanyRate  = 10
+Config.jItemPrice    = 62
+Config.jCompanyRate  = 5
 
 Config.vehicles = {
   bike = {

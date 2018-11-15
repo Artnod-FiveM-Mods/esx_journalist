@@ -1,6 +1,6 @@
 description 'ESX journalist'
 
-version '0.4'
+version '0.5'
 
 dependencies {
   "esx_society",

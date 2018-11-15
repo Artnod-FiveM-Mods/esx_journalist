@@ -20,7 +20,7 @@ INSERT INTO `job_grades` (`job_name`, `grade`, `name`, `label`, `salary`, `skin_
 	('journalist', 0, 'interim', 'Livreur', 100, '{}', '{}'),
 	('journalist', 1, 'journalist', 'Journaliste', 100, '{}', '{}'),
 	('journalist', 2, 'reporter', 'Reporter', 100, '{}', '{}'),
-	('journalist', 3, 'chief', 'RÃ©dacteur en chef', 100, '{}', '{}'),
+	('journalist', 3, 'chief', 'Rédacteur en chef', 100, '{}', '{}'),
 	('journalist', 4, 'boss'  , 'Patron', 100, '{}', '{}')
 ;
 

@@ -10,7 +10,6 @@ local lastZone          = nil
 
 local currentAction     = nil
 local currentActionMsg  = ''
-local currentActionData = {}
 
 local isWorking         = false
 local isRunning         = false
@@ -83,7 +82,7 @@ AddEventHandler('esx_phone:loaded', function(phoneNumber, contacts)
   TriggerEvent('esx_phone:addSpecialContact', specialContact.name, specialContact.number, specialContact.base64Icon)
 end)
 
--- MAIN
+-- job/grade change detection
 AddEventHandler('esx_journalist:gradeChange', function(grade)
   printDebug('gradeChange: ' .. grade)
   -- disable all zone except cloakroom
@@ -127,7 +126,7 @@ AddEventHandler('esx_journalist:jobChange', function(currentJob)
   end
 end)
 Citizen.CreateThread(function()
-  while isLoading do Citizen.Wait(10) end
+  while isLoading do Citizen.Wait(1000) end
   local playerData = ESX.GetPlayerData()
   local lastJob = playerData.job.name
   local lastGrade = playerData.job.grade
@@ -247,64 +246,59 @@ AddEventHandler('esx_journalist:hasEnteredMarker', function(zone)
     if not inVehicle then
       currentAction = 'weazelMenu'
       currentActionMsg = _U('cloakroom_action')
-      currentActionData = {}
     end
   
   elseif zone.name == 'vehicleSpawnPoint' then
     if inVehicle then
       currentAction = 'delete_vehicle'
       currentActionMsg = _U('vehicleDeleter_action')
-      currentActionData = {}
     else
       currentAction = 'vehiclespawn_menu'
       currentActionMsg = _U('vehicleSpawner_action')
-      currentActionData = {}
     end
     
   elseif zone.name == 'roof' then
     if not inVehicle then
       currentAction = 'roof_tp'
       currentActionMsg = _U('roof_action')
-      currentActionData = {}
     end
+    
   elseif zone.name == 'copterSpawnPoint' then
     if inVehicle then
       currentAction = 'delete_vehicle'
       currentActionMsg = _U('vehicleDeleter_action')
-      currentActionData = {}
     else
       currentAction = 'copterspawn'
       currentActionMsg = _U('copter_action')
-      currentActionData = {}
     end
     
   elseif zone.name == 'printer' then
     if not inVehicle then
       currentAction = 'harvestRun'
       currentActionMsg = _U('harvest_action')
-      currentActionData = {}
     end
+    
   elseif zone.name == 'interimBoxes' then
     if not inVehicle then
       currentAction = 'sellRun'
       currentActionMsg = _U('interim_sell')
-      currentActionData = {}
     end
+    
   elseif zone.name == 'journalistBoxes' then
     if not inVehicle then
       currentAction = 'sellRun'
       currentActionMsg = _U('journalist_sell')
-      currentActionData = {}
     end
   end
 end)
 AddEventHandler('esx_journalist:hasExitedMarker', function(zone)
   printDebug('hasExitedMarker: ' .. zone.name)
-  if zone.name == 'printer' then 
-    TriggerServerEvent('esx_journalist:stopJournalistHarvest') 
-    TriggerServerEvent('esx_journalist:stopInterimHarvest')
-  elseif zone.name == 'interimBoxes' then TriggerServerEvent('esx_journalist:stopInterimSell') 
-  elseif zone.name == 'journalistBoxes' then TriggerServerEvent('esx_journalist:stopJournalistSell')end
+  if zone.name == 'printer' or 
+    zone.name == 'interimBoxes' or 
+    zone.name == 'journalistBoxes'
+  then
+    TriggerServerEvent('esx_journalist:stop')
+  end
   currentAction    = nil
   currentActionMsg = ''
   ESX.UI.Menu.CloseAll()
@@ -358,7 +352,6 @@ AddEventHandler('esx_journalist:deleteVehicle', function()
   if string.find (plate, Config.platePrefix) then DeleteVehicle(vehicle)
   else ESX.ShowNotification(_U('bad_vehicle')) end
 end)
-
 Citizen.CreateThread(function()
   while isLoading do Citizen.Wait(10) end
   while true do
@@ -388,18 +381,10 @@ Citizen.CreateThread(function()
             vehicleMenu()
             
           elseif currentAction == 'harvestRun' then
-            if playerData.job.grade >= Config.journalistMinGrade then 
-              TriggerServerEvent('esx_journalist:startJournalistHarvest')
-            else
-              TriggerServerEvent('esx_journalist:startInterimHarvest')
-            end
+            TriggerServerEvent('esx_journalist:start', 'harvest', playerData.job.grade)
             
           elseif currentAction == 'sellRun' then
-            if playerData.job.grade >= Config.journalistMinGrade then
-              TriggerServerEvent('esx_journalist:startJournalistSell')
-            else
-              TriggerServerEvent('esx_journalist:startInterimSell')
-            end
+            TriggerServerEvent('esx_journalist:start', 'sell', playerData.job.grade)
             
           elseif currentAction == 'delete_vehicle' then
             TriggerEvent('esx_journalist:deleteVehicle')
@@ -494,126 +479,7 @@ function takeService(work, value)
   end
 end
 
--- menu weazel
-function openCloakroomMenu()
-  printDebug('openCloakroomMenu')
-  local elements = {}    
-  if isWorking then table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'}) end
-  table.insert(elements, {label = _U('wear1'), value = 'wear1'})
-  table.insert(elements, {label = _U('wear2'), value = 'wear2'})
-  table.insert(elements, {label = _U('wear3'), value = 'wear3'})
-  table.insert(elements, {label = _U('wear4'), value = 'wear4'})
-  table.insert(elements, {label = _U('wear5'), value = 'wear5'})
-  ESX.UI.Menu.Open(
-    'default', GetCurrentResourceName(), 'weazel_cloakroom',
-    {
-      title    = _U('cloakroom_title'),
-      elements = elements
-    },
-    function(data, menu)
-      if data.current.value == 'citizen_wear' then
-        menu.close()
-        takeService(false, data.current.value)
-        openCloakroomMenu()
-        ESX.ShowNotification(_U('end_service_notif'))
-      else
-        menu.close()
-        if data.current.value == 'wear5' then takeService(true, 'citizen_wear')
-        else takeService(true, data.current.value) end
-        openCloakroomMenu()
-        ESX.ShowNotification(_U('take_service_notif'))
-        ESX.ShowNotification(_U('start_job'))
-      end
-    end,
-    function(data, menu)
-      menu.close()
-      openWeazelActionsMenu()
-    end
-  )
-end
-function openWeazelActionsMenu()
-  printDebug('openWeazelActionsMenu')
-  local playerData = ESX.GetPlayerData()
-  local elements = {}
-  if playerData.job.grade >= Config.journalistMinGrade then  
-    table.insert(elements, {label = _U('cloakroom_title'), value = 'cloakroom'})
-  else
-    if isWorking then table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'})
-    else table.insert(elements, {label = _U('take_service'), value = 'job_wear'}) end
-  end
-  if playerData.job.grade >= Config.storageMinGrade then  table.insert(elements, {label = _U('storage'),   value = 'storage'}) end
-  if playerData.job.grade >= Config.journalistMinGrade then  table.insert(elements, {label = _U('rdc'),   value = 'roof'}) end
-  if playerData.job.grade >= Config.manageMinGrade then table.insert(elements, {label = _U('boss_actions'), value = 'boss_actions'}) end
-  
-  ESX.UI.Menu.Open(
-    'default', GetCurrentResourceName(), 'weazel_actions',
-    {
-      title    = _U('cloakroom_blip'),
-      elements = elements
-    },
-    function(data, menu)
-      if data.current.value == 'citizen_wear' then
-        menu.close()
-        takeService(false, data.current.value)
-        openWeazelActionsMenu()
-        ESX.ShowNotification(_U('end_service_notif'))
-      elseif data.current.value == 'job_wear' then
-        menu.close()
-        takeService(true, 'wear4')
-        openWeazelActionsMenu()
-        ESX.ShowNotification(_U('take_service_notif'))
-        ESX.ShowNotification(_U('start_job'))
-      elseif data.current.value == 'cloakroom' then
-        menu.close()
-        openCloakroomMenu()
-      elseif data.current.value == 'storage' then
-        menu.close()
-        openWeazelStorageMenu()
-      elseif data.current.value == 'roof' then
-        menu.close()
-        TriggerEvent('esx_journalist:hasExitedMarker', lastZone)
-        TeleportFadeEffect(Config.zones.roof.gps)
-      
-      elseif data.current.value == 'boss_actions' then
-        TriggerEvent('esx_society:openBossMenu', 'journalist', function(data, menu)
-          menu.close()
-        end)
-      end
-    end,
-    function(data, menu)
-      menu.close()
-      TriggerEvent('esx_journalist:hasEnteredMarker', lastZone)
-    end
-  )
-end
-function openWeazelStorageMenu()
-  printDebug('openWeazelStorageMenu')
-  local elements = {}    
-  table.insert(elements, {label = _U('deposit_stock'),   value = 'put_stock'})
-  table.insert(elements, {label = _U('withdraw_stock'),  value = 'get_stock'})
-  ESX.UI.Menu.Open(
-    'default', GetCurrentResourceName(), 'weazel_storage',
-    {
-      title    = _U('storage'),
-      elements = elements
-    },
-    function(data, menu)
-      if data.current.value == 'put_stock' then
-        openPutStocksMenu()
-      elseif data.current.value == 'get_stock' then
-        openGetStocksMenu()
-      elseif data.current.value == 'put_weapon' then
-        openPutWeaponMenu()
-      elseif data.current.value == 'get_weapon' then
-        openGetWeaponMenu()
-      end
-    end,
-    function(data, menu)
-      menu.close()
-      openWeazelActionsMenu()
-    end
-  )
-end
+-- menu storage
 function openGetStocksMenu()
   printDebug('openGetStocksMenu')
   ESX.TriggerServerCallback('esx_journalist:getStockItems', function(items)
@@ -764,6 +630,127 @@ function openPutWeaponMenu()
     menu.close()
   end)
 end
+function openWeazelStorageMenu()
+  printDebug('openWeazelStorageMenu')
+  local elements = {}    
+  table.insert(elements, {label = _U('deposit_stock'),   value = 'put_stock'})
+  table.insert(elements, {label = _U('withdraw_stock'),  value = 'get_stock'})
+  ESX.UI.Menu.Open(
+    'default', GetCurrentResourceName(), 'weazel_storage',
+    {
+      title    = _U('storage'),
+      elements = elements
+    },
+    function(data, menu)
+      if data.current.value == 'put_stock' then
+        openPutStocksMenu()
+      elseif data.current.value == 'get_stock' then
+        openGetStocksMenu()
+      elseif data.current.value == 'put_weapon' then
+        openPutWeaponMenu()
+      elseif data.current.value == 'get_weapon' then
+        openGetWeaponMenu()
+      end
+    end,
+    function(data, menu)
+      menu.close()
+      openWeazelActionsMenu()
+    end
+  )
+end
+-- menu weazel
+function openCloakroomMenu()
+  printDebug('openCloakroomMenu')
+  local elements = {}    
+  if isWorking then table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'}) end
+  table.insert(elements, {label = _U('wear1'), value = 'wear1'})
+  table.insert(elements, {label = _U('wear2'), value = 'wear2'})
+  table.insert(elements, {label = _U('wear3'), value = 'wear3'})
+  table.insert(elements, {label = _U('wear4'), value = 'wear4'})
+  table.insert(elements, {label = _U('wear5'), value = 'wear5'})
+  ESX.UI.Menu.Open(
+    'default', GetCurrentResourceName(), 'weazel_cloakroom',
+    {
+      title    = _U('cloakroom_title'),
+      elements = elements
+    },
+    function(data, menu)
+      if data.current.value == 'citizen_wear' then
+        menu.close()
+        takeService(false, data.current.value)
+        openWeazelActionsMenu()
+        ESX.ShowNotification(_U('end_service_notif'))
+      else
+        menu.close()
+        if data.current.value == 'wear5' then takeService(true, 'citizen_wear')
+        else takeService(true, data.current.value) end
+        openWeazelActionsMenu()
+        ESX.ShowNotification(_U('take_service_notif'))
+        ESX.ShowNotification(_U('start_job'))
+      end
+    end,
+    function(data, menu)
+      menu.close()
+      openWeazelActionsMenu()
+    end
+  )
+end
+function openWeazelActionsMenu()
+  printDebug('openWeazelActionsMenu')
+  local playerData = ESX.GetPlayerData()
+  local elements = {}
+  if playerData.job.grade >= Config.journalistMinGrade then  
+    table.insert(elements, {label = _U('cloakroom_title'), value = 'cloakroom'})
+  else
+    if isWorking then table.insert(elements, {label = _U('end_service'), value = 'citizen_wear'})
+    else table.insert(elements, {label = _U('take_service'), value = 'job_wear'}) end
+  end
+  if playerData.job.grade >= Config.storageMinGrade then  table.insert(elements, {label = _U('storage'),   value = 'storage'}) end
+  if playerData.job.grade >= Config.journalistMinGrade then  table.insert(elements, {label = _U('rdc'),   value = 'roof'}) end
+  if playerData.job.grade >= Config.manageMinGrade then table.insert(elements, {label = _U('boss_actions'), value = 'boss_actions'}) end
+  
+  ESX.UI.Menu.Open(
+    'default', GetCurrentResourceName(), 'weazel_actions',
+    {
+      title    = _U('cloakroom_blip'),
+      elements = elements
+    },
+    function(data, menu)
+      if data.current.value == 'citizen_wear' then
+        menu.close()
+        takeService(false, data.current.value)
+        openWeazelActionsMenu()
+        ESX.ShowNotification(_U('end_service_notif'))
+      elseif data.current.value == 'job_wear' then
+        menu.close()
+        takeService(true, 'wear4')
+        openWeazelActionsMenu()
+        ESX.ShowNotification(_U('take_service_notif'))
+        ESX.ShowNotification(_U('start_job'))
+      elseif data.current.value == 'cloakroom' then
+        menu.close()
+        openCloakroomMenu()
+      elseif data.current.value == 'storage' then
+        menu.close()
+        openWeazelStorageMenu()
+      elseif data.current.value == 'roof' then
+        menu.close()
+        TriggerEvent('esx_journalist:hasExitedMarker', lastZone)
+        TeleportFadeEffect(Config.zones.roof.gps)
+      
+      elseif data.current.value == 'boss_actions' then
+        TriggerEvent('esx_society:openBossMenu', 'journalist', function(data, menu)
+          menu.close()
+        end)
+      end
+    end,
+    function(data, menu)
+      menu.close()
+      TriggerEvent('esx_journalist:hasEnteredMarker', lastZone)
+    end
+  )
+end
+
 -- menu Vehicle
 function vehicleMenu()
   printDebug('vehicleMenu')
@@ -995,6 +982,7 @@ AddEventHandler('esx_journalist:nextBoxes', function()
   end
   currentRun = tmpList
   if #currentRun == 0 then genRunList() end
+  local playerData = ESX.GetPlayerData()
   for i=1, #zoneList, 1 do
     if playerData.job.grade < Config.journalistMinGrade and zoneList[i].name == 'interimBoxes' then 
       if DoesBlipExist(zoneList[i].blip) then RemoveBlip(zoneList[i].blip) end

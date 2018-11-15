@@ -1,21 +1,11 @@
-ESX = nil
 local debug = Config.debug
-
-local playersInterimHarvest = {}
-local playersInterimHarvestExit = {}
-
-local playersInterimSell = {}
-local playersInterimSellExit = {}
-
-local playersJournalistHarvest = {}
-local playersJournalistHarvestExit = {}
-
-local playersJournalistSell = {}
-local playersJournalistSellExit = {}
+ESX = nil
+local playersWork = {}
+local playersWorkExit = {}
 
 -- debug msg
 function printDebug(msg)
-  if Config.debug then print('[esx_journalist]\t'.. msg) end
+  if debug then print('[esx_journalist] '.. msg) end
 end
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
@@ -70,203 +60,121 @@ AddEventHandler('esx_journalist:putStockItems', function(itemName, count)
   end)
 end)
 
--- interim harvest
-function interimHarvest(source)
-  printDebug('interimHarvest')
-  SetTimeout(Config.iItemTime, function()
-    if playersInterimHarvestExit[source] then playersInterimHarvest[source] = false end
-    if playersInterimHarvest[source] == true then
+-- harvest
+function harvest(source, grade)
+  printDebug('harvest')
+  local timeout = nil
+  local itemDb  = nil
+  local iAdd  = nil
+  if grade >= Config.journalistMinGrade then
+  timeout = Config.jItemTime
+  itemDb  = Config.jItemDb_name
+  iAdd  = Config.jItemAdd
+  else
+  timeout = Config.iItemTime
+  itemDb  = Config.iItemDb_name
+  iAdd  = Config.iItemAdd
+  end
+  SetTimeout(timeout, function()
+    if playersWorkExit[source] then playersWork[source] = false end
+    if playersWork[source] == true then
       local xPlayer = ESX.GetPlayerFromId(source)
-      local bag = xPlayer.getInventoryItem(Config.iItemDb_name)
+      local bag = xPlayer.getInventoryItem(itemDb)
       local quantity = bag.count
       if quantity >= bag.limit then
         TriggerClientEvent('esx:showNotification', source, _U('go_sell'))
-        playersInterimHarvest[source] = false
+        playersWork[source] = false
       else
-        xPlayer.addInventoryItem(Config.iItemDb_name, Config.iItemAdd)
-        if quantity < bag.limit + Config.iItemAdd then
-          interimHarvest(source)
+        xPlayer.addInventoryItem(itemDb, iAdd)
+        if quantity < bag.limit + iAdd then
+          harvest(source, grade)
         else 
           TriggerClientEvent('esx:showNotification', source, _U('go_sell'))
-          playersInterimHarvest[source] = false
+          playersWork[source] = false
         end
       end
     else 
       TriggerClientEvent('esx:showNotification', source, _U('harvest_fail')) 
-      playersInterimHarvest[source] = false
+      playersWork[source] = false
     end
   end)
 end
-RegisterServerEvent('esx_journalist:startInterimHarvest')
-AddEventHandler('esx_journalist:startInterimHarvest', function()
-  printDebug('startInterimHarvest')
-  local _source = source
-  if not playersInterimHarvest[_source] then
-    TriggerClientEvent('esx:showNotification', _source, _U('harvest_start'))
-    playersInterimHarvest[_source] = true
-    playersInterimHarvestExit[_source] = false
-    interimHarvest(_source)
+
+-- sell
+function sell(source, grade)
+  printDebug('sell')
+  local timeout = nil
+  local itemDb  = nil
+  local iRemove = nil
+  local iPrice  = nil
+  local cPrice  = nil
+  local gPrice  = nil
+  if grade >= Config.journalistMinGrade then 
+    timeout = Config.jItemTime
+    itemDb  = Config.jItemDb_name
+    iRemove = Config.jItemRemove
+    iPrice  = Config.jItemPrice
+    cPrice  = math.floor(iPrice * Config.jCompanyRate)
+    gPrice  = math.floor(cPrice * Config.gouvRate)
+  else 
+    timeout = Config.iItemTime
+    itemDb  = Config.iItemDb_name
+    iRemove = Config.iItemRemove
+    iPrice  = Config.iItemPrice
+    cPrice  = math.floor(iPrice * Config.iCompanyRate)
+    gPrice  = math.floor(cPrice * Config.gouvRate)
   end
-  if playersInterimHarvestExit[_source] then
-    TriggerClientEvent('esx:showNotification', _source, _U('dont_cheat'))
-  end
-end)
-RegisterServerEvent('esx_journalist:stopInterimHarvest')
-AddEventHandler('esx_journalist:stopInterimHarvest', function()
-  printDebug('stopInterimHarvest')
-  local _source = source
-  if playersInterimHarvest[_source] then playersInterimHarvestExit[_source] = true end
-end)
--- interim sell
-function interimSell(source)
-  printDebug('interimSell')
-  SetTimeout(Config.iItemTime, function()
-    if playersInterimSellExit[source] then playersInterimSell[source] = false end
-    if playersInterimSell[source] == true then
+  
+  SetTimeout(timeout, function()
+    if playersWorkExit[source] then playersWork[source] = false end
+    if playersWork[source] then
       local xPlayer = ESX.GetPlayerFromId(source)
-      local quantity = xPlayer.getInventoryItem(Config.iItemDb_name).count
-      if quantity < Config.iItemRemove then
-        TriggerClientEvent('esx:showNotification', source, _U('no_item_to_sell', Config.iItemDb_name))
-        playersInterimSell[source] = false
+      local quantity = xPlayer.getInventoryItem(itemDb).count
+      if quantity < iRemove then
+        TriggerClientEvent('esx:showNotification', source, _U('no_item_to_sell', itemDb))
+        playersWork[source] = false
       else
-        xPlayer.removeInventoryItem(Config.iItemDb_name, Config.iItemRemove)
-        local employeePrice = Config.iItemPrice
-        local companyPrice = math.floor(employeePrice * Config.iCompanyRate)
-        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_weazel', function(compAccount)
-          compAccount.addMoney(companyPrice)
-          xPlayer.addMoney(employeePrice)
-          TriggerClientEvent('esx:showNotification', source, _U('you_earned', employeePrice))
-          TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', companyPrice))
-        end)
-        local gouvTaxe = math.floor(companyPrice * Config.gouvRate)
-        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_taxe_weazel', function(taxeAccount)
-          taxeAccount.addMoney(gouvTaxe)
-        end)
+        xPlayer.removeInventoryItem(itemDb, iRemove)
+        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_weazel', function(cAccount)
+      cAccount.addMoney(cPrice)
+      xPlayer.addMoney(iPrice)
+      TriggerClientEvent('esx:showNotification', source, _U('you_earned', iPrice))
+      TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', cPrice))
+    end)
+        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_taxe_weazel', function(gAccount)
+      gAccount.addMoney(gPrice)
+    end)
         TriggerClientEvent('esx_journalist:nextBoxes', source)
       end
-      playersInterimSell[source] = false
+      playersWork[source] = false
     else TriggerClientEvent('esx:showNotification', source, _U('sell_fail')) end
   end)
+  
 end
-RegisterServerEvent('esx_journalist:startInterimSell')
-AddEventHandler('esx_journalist:startInterimSell', function()
-  printDebug('startInterimSell')
+
+RegisterServerEvent('esx_journalist:start')
+AddEventHandler('esx_journalist:start', function(action, grade)
+  printDebug('start')
   local _source = source
-  if not playersInterimSell[_source] then
+  if not playersWork[_source] then
+    playersWork[_source] = true
+    playersWorkExit[_source] = false
+  if action == 'harvest' then
+      TriggerClientEvent('esx:showNotification', _source, _U('harvest_start'))
+      harvest(_source, grade)
+  elseif action == 'sell' then
     TriggerClientEvent('esx:showNotification', _source, _U('sell_start'))
-    playersInterimSell[_source] = true
-    playersInterimSellExit[_source] = false
-    interimSell(_source)
+    sell(_source, grade)
   end
-  if playersInterimSellExit[_source] then
+  end
+  if playersWorkExit[_source] then
     TriggerClientEvent('esx:showNotification', _source, _U('dont_cheat'))
   end
 end)
-RegisterServerEvent('esx_journalist:stopInterimSell')
-AddEventHandler('esx_journalist:stopInterimSell', function()
-  printDebug('stopInterimSell')
+RegisterServerEvent('esx_journalist:stop')
+AddEventHandler('esx_journalist:stop', function()
+  printDebug('stop')
   local _source = source
-  if playersInterimSell[_source] then playersInterimSellExit[_source] = true end
-end)
-
--- journalist harvest
-function journalistHarvest(source)
-  printDebug('journalistHarvest')
-  SetTimeout(Config.iItemTime, function()
-    if playersJournalistHarvestExit[source] then playersJournalistHarvest[source] = false end
-    if playersJournalistHarvest[source] == true then
-      local xPlayer = ESX.GetPlayerFromId(source)
-      local bag = xPlayer.getInventoryItem(Config.jItemDb_name)
-      local quantity = bag.count
-      if quantity >= bag.limit then
-        TriggerClientEvent('esx:showNotification', source, _U('go_sell'))
-        playersJournalistHarvest[source] = false
-      else
-        xPlayer.addInventoryItem(Config.jItemDb_name, Config.jItemAdd)
-        if quantity < bag.limit + Config.jItemAdd then
-          journalistHarvest(source)
-        else 
-          TriggerClientEvent('esx:showNotification', source, _U('go_sell'))
-          playersJournalistHarvest[source] = false
-        end
-      end
-    else 
-      TriggerClientEvent('esx:showNotification', source, _U('harvest_fail')) 
-      playersJournalistHarvest[source] = false
-    end
-  end)
-end
-RegisterServerEvent('esx_journalist:startJournalistHarvest')
-AddEventHandler('esx_journalist:startJournalistHarvest', function()
-  printDebug('startJournalistHarvest')
-  local _source = source
-  if not playersJournalistHarvest[_source] then
-    TriggerClientEvent('esx:showNotification', _source, _U('harvest_start'))
-    playersJournalistHarvest[_source] = true
-    playersJournalistHarvestExit[_source] = false
-    journalistHarvest(_source)
-  end
-  if playersJournalistHarvestExit[_source] then
-    TriggerClientEvent('esx:showNotification', _source, _U('dont_cheat'))
-  end
-end)
-RegisterServerEvent('esx_journalist:stopJournalistHarvest')
-AddEventHandler('esx_journalist:stopJournalistHarvest', function()
-  printDebug('stopJournalistHarvest')
-  local _source = source
-  if playersJournalistHarvest[_source] then playersJournalistHarvestExit[_source] = true end
-end)
-
--- journalist sell
-function journalistSell(source)
-  printDebug('journalistSell')
-  SetTimeout(Config.iItemTime, function()
-    if playersJournalistSellExit[source] then playersJournalistSell[source] = false end
-    if playersJournalistSell[source] == true then
-      local xPlayer = ESX.GetPlayerFromId(source)
-      local quantity = xPlayer.getInventoryItem(Config.jItemDb_name).count
-      if quantity < Config.iItemRemove then
-        TriggerClientEvent('esx:showNotification', source, _U('no_item_to_sell', Config.jItemDb_name))
-        playersJournalistSell[source] = false
-      else
-        xPlayer.removeInventoryItem(Config.jItemDb_name, Config.jItemRemove)
-        local employeePrice = Config.jItemPrice
-        local companyPrice = math.floor(employeePrice * Config.jCompanyRate)
-        local gouvTaxe = math.floor(companyPrice * Config.gouvRate)
-        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_weazel', function(compAccount)
-          compAccount.addMoney(companyPrice)
-          xPlayer.addMoney(employeePrice)
-          TriggerClientEvent('esx:showNotification', source, _U('you_earned', employeePrice))
-          TriggerClientEvent('esx:showNotification', source, _U('your_comp_earned', companyPrice))
-        end)
-        TriggerEvent('esx_addonaccount:getSharedAccount', 'society_taxe_weazel', function(taxeAccount)
-          taxeAccount.addMoney(gouvTaxe)
-        end)
-        TriggerClientEvent('esx_journalist:nextBoxes', source)
-      end
-      playersJournalistSell[source] = false
-    else TriggerClientEvent('esx:showNotification', source, _U('sell_fail')) end
-  end)
-end
-
-RegisterServerEvent('esx_journalist:startJournalistSell')
-AddEventHandler('esx_journalist:startJournalistSell', function()
-  printDebug('startJournalistSell')
-  local _source = source
-  if not playersJournalistSell[_source] then
-    TriggerClientEvent('esx:showNotification', _source, _U('sell_start'))
-    playersJournalistSell[_source] = true
-    playersJournalistSellExit[_source] = false
-    journalistSell(_source)
-  end
-  if playersJournalistSellExit[_source] then
-    TriggerClientEvent('esx:showNotification', _source, _U('dont_cheat'))
-  end
-end)
-RegisterServerEvent('esx_journalist:stopJournalistSell')
-AddEventHandler('esx_journalist:stopJournalistSell', function()
-  printDebug('stopJournalistSell')
-  local _source = source
-  if playersJournalistSell[_source] then playersJournalistSellExit[_source] = true end
+  if playersWork[_source] then playersWorkExit[_source] = true end
 end)
 

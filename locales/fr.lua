@@ -65,8 +65,6 @@ Locales['fr'] = {
   --notif general
   ['take_service_notif']   = 'Prise de ~g~Service~s~',
   ['end_service_notif']    = 'Fin de ~r~Service~s~',
-  ['in_vehicle']           = '~r~Sortez~s~ de votre véhicule !',
-  ['vehicle_broken']       = 'Va ~r~réparer~s~ le véhicule avant !',
   ['bad_vehicle']          = 'Vous ne pouvez ranger que des ~r~véhicules de service~s~',
   ['not_good_veh']         = 'Vous devez être dans votre ~r~vehicule de service~s~',
   ['dont_cheat']           = '~r~Sortez~s~ et ~r~revenez~s~ dans la zone !',
